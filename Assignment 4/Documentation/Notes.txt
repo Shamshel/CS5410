@@ -1,0 +1,5 @@
+Possible Themes:
+	Angry Tetris God(College Humor inspired): https://www.youtube.com/watch?v=Alw5hs0chj0
+	
+Polymorphism:
+	http://zipcon.net/~swhite/docs/computers/languages/object_oriented_JS/inheritance.html
