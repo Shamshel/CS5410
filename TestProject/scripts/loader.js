@@ -29,7 +29,7 @@ window.addEventListener('load', function() {
 				'preload!scripts/highscores.js',
 				'preload!scripts/help.js',
 				'preload!scripts/about.js',
-				'preload!images/USU-Logo.png'
+				'preload!images/square_block.png'
 			],
 			complete : function() {
 				console.log('All files requested for loading...');

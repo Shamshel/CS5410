@@ -13,9 +13,9 @@ MYGAME.screens['game-play'] = (function(controls) {
 		console.log('game initializing...');
 
 		myTexture = MYGAME.graphics.Texture( {
-			image : MYGAME.images['images/USU-Logo.png'],
+			image : MYGAME.images['images/square_block.png'],
 			center : { x : 100, y : 100 },
-			width : 100, height : 100,
+			width : 100, height : 133,
 			rotation : 0,
 			moveRate : 200,			// pixels per second
 			rotateRate : 3.14159	// Radians per second
