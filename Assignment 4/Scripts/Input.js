@@ -126,12 +126,132 @@ if (typeof KeyEvent === 'undefined') {
     };
 }
 
+if (typeof KeyTranslation === 'undefined') {
+    var KeyTranslation = {
+        DOM_VK_CANCEL: 'cancel',
+        DOM_VK_HELP: 'help',
+        DOM_VK_BACK_SPACE: 'backspace',
+        DOM_VK_TAB: 'tab',
+        DOM_VK_CLEAR: 'clear',
+        DOM_VK_RETURN: 'return',
+        DOM_VK_ENTER: 'enter',
+        DOM_VK_SHIFT: 'shift',
+        DOM_VK_CONTROL: 'ctrl',
+        DOM_VK_ALT: 'alt',
+        DOM_VK_PAUSE: 'pause',
+        DOM_VK_CAPS_LOCK: 'caps lock',
+        DOM_VK_ESCAPE: 'esc',
+        DOM_VK_SPACE: 'space',
+        DOM_VK_PAGE_UP: 'page up',
+        DOM_VK_PAGE_DOWN: 'page down',
+        DOM_VK_END: 'end',
+        DOM_VK_HOME: 'home',
+        DOM_VK_LEFT: 'left',
+        DOM_VK_UP: 'up',
+        DOM_VK_RIGHT: 'right',
+        DOM_VK_DOWN: 'down',
+        DOM_VK_PRINTSCREEN: 'print screen',
+        DOM_VK_INSERT: 'insert',
+        DOM_VK_DELETE: 'delete',
+        DOM_VK_0: '0',
+        DOM_VK_1: '1',
+        DOM_VK_2: '2',
+        DOM_VK_3: '3',
+        DOM_VK_4: '4',
+        DOM_VK_5: '5',
+        DOM_VK_6: '6',
+        DOM_VK_7: '7',
+        DOM_VK_8: '8',
+        DOM_VK_9: '9',
+        DOM_VK_SEMICOLON: ';',
+        DOM_VK_EQUALS: '=',
+        DOM_VK_A: 'a',
+        DOM_VK_B: 'b',
+        DOM_VK_C: 'c',
+        DOM_VK_D: 'd',
+        DOM_VK_E: 'e',
+        DOM_VK_F: 'f',
+        DOM_VK_G: 'g',
+        DOM_VK_H: 'h',
+        DOM_VK_I: 'i',
+        DOM_VK_J: 'j',
+        DOM_VK_K: 'k',
+        DOM_VK_L: 'l',
+        DOM_VK_M: 'm',
+        DOM_VK_N: 'n',
+        DOM_VK_O: 'o',
+        DOM_VK_P: 'p',
+        DOM_VK_Q: 'q',
+        DOM_VK_R: 'r',
+        DOM_VK_S: 's',
+        DOM_VK_T: 't',
+        DOM_VK_U: 'u',
+        DOM_VK_V: 'v',
+        DOM_VK_W: 'w',
+        DOM_VK_X: 'x',
+        DOM_VK_Y: 'y',
+        DOM_VK_Z: 'z',
+        DOM_VK_CONTEXT_MENU: 'ctx menu',
+        DOM_VK_NUMPAD0: 'num 0',
+        DOM_VK_NUMPAD1: 'num 1',
+        DOM_VK_NUMPAD2: 'num 2',
+        DOM_VK_NUMPAD3: 'num 3',
+        DOM_VK_NUMPAD4: 'num 4',
+        DOM_VK_NUMPAD5: 'num 5',
+        DOM_VK_NUMPAD6: 'num 6',
+        DOM_VK_NUMPAD7: 'num 7',
+        DOM_VK_NUMPAD8: 'num 8',
+        DOM_VK_NUMPAD9: 'num 9',
+        DOM_VK_MULTIPLY: '*',
+        DOM_VK_ADD: '+',
+        DOM_VK_SEPARATOR: ' ',
+        DOM_VK_SUBTRACT: '-',
+        DOM_VK_DECIMAL: '.',
+        DOM_VK_DIVIDE: '/',
+        DOM_VK_F1: 'F1',
+        DOM_VK_F2: 'F2',
+        DOM_VK_F3: 'F3',
+        DOM_VK_F4: 'F4',
+        DOM_VK_F5: 'F5',
+        DOM_VK_F6: 'F6',
+        DOM_VK_F7: 'F7',
+        DOM_VK_F8: 'F8',
+        DOM_VK_F9: 'F9',
+        DOM_VK_F10: 'F10',
+        DOM_VK_F11: 'F11',
+        DOM_VK_F12: 'F12',
+        DOM_VK_F13: 'F13',
+        DOM_VK_F14: 'F14',
+        DOM_VK_F15: 'F15',
+        DOM_VK_F16: 'F16',
+        DOM_VK_F17: 'F17',
+        DOM_VK_F18: 'F18',
+        DOM_VK_F19: 'F19',
+        DOM_VK_F20: 'F20',
+        DOM_VK_F21: 'F21',
+        DOM_VK_F22: 'F22',
+        DOM_VK_F23: 'F23',
+        DOM_VK_F24: 'F24',
+        DOM_VK_NUM_LOCK: 'num lock',
+        DOM_VK_SCROLL_LOCK: 'scroll lock',
+        DOM_VK_COMMA: ',',
+        DOM_VK_PERIOD: '.',
+        DOM_VK_SLASH: '/',
+        DOM_VK_BACK_QUOTE: '\`',
+        DOM_VK_OPEN_BRACKET: '[',
+        DOM_VK_BACK_SLASH: '\\',
+        DOM_VK_CLOSE_BRACKET: ']',
+        DOM_VK_QUOTE: '"',
+        DOM_VK_META: 'meta'
+    };
+}
+
 // ------------------------------------------------------------------
 //
 //      Input module structure provided by Dean Mathias
 //
 // ------------------------------------------------------------------
-MYGAME.input = (function() {
+Assignment_4.input = (function() {
 	'use strict';
 	
 	function Mouse() {
@@ -267,9 +387,131 @@ MYGAME.input = (function() {
 		return that;
 	}
 	
+	//Set default controls
+    var controls = {
+        prevKeyUp: KeyEvent.DOM_VK_UP,
+        prevKeyDown: KeyEvent.DOM_VK_DOWN,
+        prevKeyLeft: KeyEvent.DOM_VK_LEFT,
+        prevKeyRight: KeyEvent.DOM_VK_RIGHT,
+		prevKeyRotateRight: KeyEvent.DOM_VK_X,
+		prevKeyRotateLeft: KeyEvent.DOM_VK_Z,
+        newKeyUp: undefined,
+        changeUp: false,
+        newKeyDown: undefined,
+        changeDown:   false,
+        newKeyLeft: undefined,
+        changeLeft:   false,
+        newKeyRight: undefined,
+        changeRight:   false,
+		newKeyRotateLeft: undefined,
+        changeRotateLeft:   false,
+        newKeyRotateRight: undefined,
+        changeRotateRight:   false,
+    };
+
+    function initialize() {
+        document.getElementById('id-controls-back').addEventListener(
+			'click',
+			function () { MYGAME.game.showScreen('main-menu'); },
+			false);
+
+    }
+
+    function run() {
+        //
+        // I know this is empty, there isn't anything to do.
+    }
+
+    function changeLeft(e) {
+        //console.log('change left...');
+        if (controls.newKeyLeft === undefined) {
+            controls.newKeyLeft = e.keyCode;
+            controls.changeLeft = true;
+        }
+        else {
+            controls.prevKeyLeft = controls.newKeyLeft;
+            controls.newKeyLeft = e.keyCode;
+            controls.changeLeft = true;
+        }
+
+    }
+
+    function changeRight(e) {
+        //console.log('change right...');
+        if (controls.newKeyRight === undefined) {
+            controls.newKeyRight = e.keyCode;
+            controls.changeRight = true;
+        }
+        else {
+            controls.prevKeyRight = controls.newKeyRight;
+            controls.newKeyRight = e.keyCode;
+            controls.changeRight = true;
+        }
+    }
+
+	function changeRotateLeft(e) {
+		//console.log('change rotate left...');
+        if (controls.newKeyRotateLeft === undefined) {
+            controls.newKeyRotateLeft = e.keyCode;
+            controls.changeRotateLeft = true;
+        }
+        else {
+            controls.prevKeyRotateLeft = controls.newKeyLeft;
+            controls.newKeyRotateLeft = e.keyCode;
+            controls.changeRotateLeft = true;
+        }
+
+    }
+	
+	function changeRotateRight(e) {
+		//console.log('change rotate right...');
+        if (controls.newKeyRotateRight === undefined) {
+            controls.newKeyRotateRight = e.keyCode;
+            controls.changeRotateRight = true;
+        }
+        else {
+            controls.prevKeyRotateRight = controls.newKeyLeft;
+            controls.newKeyRotateRight = e.keyCode;
+            controls.changeRotateRight = true;
+        }
+
+    }
+	
+    function changeUp(e) {
+        //console.log('change up...');
+        if (controls.newKeyUp === undefined) {
+            controls.newKeyUp = e.keyCode;
+            controls.changeUp = true;
+        }
+        else {
+            controls.prevKeyUp = controls.newKeyUp;
+            controls.newKeyUp = e.keyCode;
+            controls.changeUp = true;
+        }
+    }
+
+    function changeDown(e) {
+        //console.log('change down...');
+        if (controls.newKeyDown === undefined) {
+            controls.newKeyDown = e.keyCode;
+            controls.changeDown = true;
+        }
+        else {
+            controls.prevKeyDown = controls.newKeyDown;
+            controls.newKeyDown = e.keyCode;
+            controls.changeDown = true;
+        }
+    }
+	
 	return {
 		Keyboard : Keyboard,
-		Mouse : Mouse
+		Mouse : Mouse,
+		changeLeft : changeLeft,
+		changeRight : changeRight,
+		changeUp : changeUp,
+		changeDown : changeDown,
+		controls : controls,
+		
 	};
 }());
 

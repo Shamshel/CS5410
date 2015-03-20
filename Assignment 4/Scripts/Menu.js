@@ -1,3 +1,6 @@
+Assignment_4.menu = (function() {
+	'use strict';
+
 	//---------------------------------------------------
 	//menu objects
 	//---------------------------------------------------
@@ -18,7 +21,6 @@
 			selectedColor = 'white';
 		
 		that.mouseOver = function(e, elapsedTime) {
-			
 			if(e.clientY < that.y && e.clientY > that.y-that.size){
 				that.selected = true;
 				
@@ -71,7 +73,7 @@
 		
 		return that;
 		
-	};
+	}
 	
 	function Menu(title, items, footer, top, width, height) {
 		var titleSize = 80,
@@ -125,3 +127,11 @@
 	//---------------------------------------------------
 	//menu objects
 	//---------------------------------------------------
+	
+	return {
+		Menu : Menu,
+		MenuItem : MenuItem
+		
+	};
+	
+}());

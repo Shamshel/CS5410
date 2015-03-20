@@ -22,8 +22,11 @@ window.addEventListener('load', function() {
 	Modernizr.load([
 		{
 			load : [
-				'preload!scripts/Assignment_4.js',
-				'preload!scripts/Menu.js'
+				'preload!scripts/Menu.js',
+				'preload!scripts/Input.js',
+				'preload!scripts/Frame.js',
+				'preload!scripts/Game.js',
+				'preload!scripts/Assignment_4.js'
 			],
 			complete : function() {
 				console.log('All files requested for loading...');
@@ -55,8 +58,12 @@ yepnope.addPrefix('preload', function(resource) {
 		//
 		// When everything has finished preloading, go ahead and start the game
 		if (Assignment_4.status.preloadComplete === Assignment_4.status.preloadRequest) {
+			if(Assignment_4.frame == null){
+				console.log("frame is undefined!");
+				
+			}
 			console.log('Preloading complete!');
-			Assignment_4.initialize();
+			Assignment_4.initialize(Assignment_4.game);
 		}
 	};
 	
