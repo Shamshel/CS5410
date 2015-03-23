@@ -22,7 +22,8 @@ window.addEventListener('load', function() {
 	Modernizr.load([
 		{
 			load : [
-				'preload!scripts/Menu.js',
+                'preload!Media/Tetris.png',
+                'preload!scripts/Menu.js',
 				'preload!scripts/Input.js',
 				'preload!scripts/Frame.js',
 				'preload!scripts/Game.js',

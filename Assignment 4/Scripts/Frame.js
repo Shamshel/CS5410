@@ -21,11 +21,11 @@ Assignment_4.frame = (function() {
 		};
 		
 		that.render = function(context) {
-			context.save();
-			
+		    context.save();
+
 			context.beginPath();
 			context.lineWidth = '6';
-			context.strokeStyle = 'white';
+			context.strokeStyle = 'yellow';
 			context.rect(that.x, that.y, that.width, that.height);
 			
 			context.stroke();
@@ -72,8 +72,8 @@ Assignment_4.frame = (function() {
 		};
 		
 		that.render = function(context){
-			that.border.render(context);
-		
+		    that.border.render(context);
+		    
 		};
 		
 		return that;

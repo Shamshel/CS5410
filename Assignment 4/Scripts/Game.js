@@ -22,6 +22,13 @@ Assignment_4.game = (function(menu, frame, input) {
 	var mouse = input.Mouse();
 	var keyboard = input.Keyboard();
 	var gameFrame = frame.Frame();
+
+	var backgroundImage = {
+	    image: Assignment_4.images['Media/Tetris.png'],
+	    center: { x: 0, y: 0 },
+	    width: canvas.width, height: canvas.height,
+	    rotation: 0
+	};
 	
 	function Game() {
 		var timestamp = 0,
@@ -86,7 +93,7 @@ Assignment_4.game = (function(menu, frame, input) {
 	
 	function MainMenuState(gameFrame) {
 		var that = {
-				mainMenu : menu.Menu('Milestone 1 Menu', ['Current Keybindings'], '', 100, gameFrame.width, gameFrame.height-100),
+				mainMenu : menu.Menu('', ['Current Keybindings'], '', 100, gameFrame.width, gameFrame.height-100, true),
 				dead : false
 			
 			};
@@ -118,8 +125,8 @@ Assignment_4.game = (function(menu, frame, input) {
 		};
 		
 		that.render = function(context) {
-			that.mainMenu.render(context);
-			
+		    context.drawImage(backgroundImage.image, 0, 0, (canvas.width-1)/1.5, ((canvas.height-1)/1.125)+100);
+		    that.mainMenu.render(context);
 		};
 		
 		return that;
@@ -130,7 +137,7 @@ Assignment_4.game = (function(menu, frame, input) {
 		var controls = ['left', 'right', 'rotate left', 'rotate right', 'soft drop', 'hard drop'];
 		
 		var that = {
-					menu : menu.Menu('Click to change key', controls, 'return', 100, gameFrame.width, gameFrame.height-100),
+					menu : menu.Menu('Click to change key', controls, 'return', 100, gameFrame.width, gameFrame.height-100, false),
 					dead : false
 			
 				};
@@ -309,7 +316,7 @@ Assignment_4.game = (function(menu, frame, input) {
 	
 	function ChangeKeyBindingState(gameFrame, item) {
 		var that = {
-				menu : menu.Menu('press key to change', [item], 'cancel', 100, gameFrame.width, gameFrame.height-100),
+				menu : menu.Menu('press key to change', [item], 'cancel', 100, gameFrame.width, gameFrame.height-100, false),
 				dead : false
 			
 			};
