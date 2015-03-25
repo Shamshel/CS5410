@@ -8,20 +8,29 @@ Assignment_4.menu = (function() {
 	//loosely based on tutorial from
 	//http://www.iguanademos.com/Jare/docs/html5/Lessons/Lesson4/
 	
-	function MenuItem(string, fontSize, position, width, borderF) {
+	function MenuItem(string, fontSize, position, width, drawBorder) {
 	    var that = {
 	        text: string,
 	        size: fontSize,
 	        y: position,
 	        selected: false,
 	        clicked: false,
-            border: borderF 
-	    },
-			normalColor = 'lightblue',
-			selectedColor = 'white',
+            border: drawBorder
+	    };
+			if(that.border){
+				var normalColor = 'lightblue';
+				var selectedColor = 'white';
+				
+			}
+			
+			else{
+				var normalColor = 'white';
+				var selectedColor = 'lightblue';
+				
+			}
 
             //Border vars
-            borderX,
+		var borderX,
             borderY,
             borderW,
             borderH,

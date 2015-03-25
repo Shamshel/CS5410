@@ -47,7 +47,18 @@ Assignment_4.frame = (function() {
 		var that = {
 			height : 0,
 			width : 0,
-			border : Border()
+			border : Border(),
+			renderBorder : false,
+			image: {
+				src : Assignment_4.images['Media/Tetris.png'],
+				x : 0,
+				y : 0,
+				width : 0,
+				height : 0,
+				imageWidth : 480,
+				imageHeight : 600
+				
+			}
 			
 		};
 		
@@ -65,6 +76,33 @@ Assignment_4.frame = (function() {
 				that.width = Math.round(that.height*(4/3));
 				
 			}
+	
+			//center background image
+			if(that.width < that.image.imageWidth){
+				that.image.width = that.width;
+				
+			}
+			
+			else{
+				that.image.width = that.image.imageWidth;
+				
+			}
+			
+			if(that.height < that.image.height){
+				that.image.height = that.height;
+				that.image.y = 0;
+				
+			}
+			
+			else{
+				//that.image.height = that.image.imageHeight;
+				that.image.height = that.height;
+				that.image.width = that.height*(that.image.imageWidth/that.image.imageHeight);
+				that.image.y = (that.height/2)-(that.image.height/2);
+			
+			}
+			
+			that.image.x = that.width/2-(that.image.width/2);			
 			
 			//center internal border
 			that.border.initialize(that.width/8, that.height/8, that.width*(3/4), that.height*(3/4));
@@ -72,7 +110,11 @@ Assignment_4.frame = (function() {
 		};
 		
 		that.render = function(context){
-		    that.border.render(context);
+			//render background image
+			context.drawImage(that.image.src, that.image.x, that.image.y, that.image.width, that.image.height);
+				
+			//render background border	
+		    //that.border.render(context);
 		    
 		};
 		

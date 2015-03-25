@@ -22,13 +22,6 @@ Assignment_4.game = (function(menu, frame, input) {
 	var mouse = input.Mouse();
 	var keyboard = input.Keyboard();
 	var gameFrame = frame.Frame();
-
-	var backgroundImage = {
-	    image: Assignment_4.images['Media/Tetris.png'],
-	    center: { x: 0, y: 0 },
-	    width: canvas.width, height: canvas.height,
-	    rotation: 0
-	};
 	
 	function Game() {
 		var timestamp = 0,
@@ -60,6 +53,8 @@ Assignment_4.game = (function(menu, frame, input) {
 
 		that.render = function() {
 			context.clear();
+			
+			gameFrame.render(context);
 			
 			gameStack[gameStack.length-1].render(context);
 
@@ -125,7 +120,7 @@ Assignment_4.game = (function(menu, frame, input) {
 		};
 		
 		that.render = function(context) {
-		    context.drawImage(backgroundImage.image, 0, 0, (canvas.width-1)/1.5, ((canvas.height-1)/1.125)+100);
+			//context.drawImage(backgroundImage.image, 0, 0, (canvas.width-1)/1.5, ((canvas.height-1)/1.125)+100);
 		    that.mainMenu.render(context);
 		};
 		
@@ -154,14 +149,16 @@ Assignment_4.game = (function(menu, frame, input) {
 			mouse.registerCommand('mousemove', that.menu.footer.mouseOver);
 			mouse.registerCommand('mousedown', that.menu.footer.click);
 			
-			window.removeEventListener('keydown', input.changeLeft);
-			window.addEventListener('keydown', input.changeRight);
-			window.addEventListener('keydown', input.changeRotateLeft);
-			window.addEventListener('keydown', input.changeRotateRight);
-			window.addEventListener('keydown', input.changeDown);
-			window.addEventListener('keydown', input.changeUp);
-			
 			var result = null;
+			
+			window.removeEventListener('keydown', input.changeLeft);
+			window.removeEventListener('keydown', input.changeRight);
+			window.removeEventListener('keydown', input.changeRotateLeft);
+			window.removeEventListener('keydown', input.changeRotateRight);
+			window.removeEventListener('keydown', input.changeDown);
+			window.removeEventListener('keydown', input.changeUp);
+			
+
 			
 			//left
 			if(that.menu.items[0].clicked == true){
@@ -170,7 +167,9 @@ Assignment_4.game = (function(menu, frame, input) {
 				
 				window.addEventListener('keydown', input.changeLeft);
 				
-				result = ChangeKeyBindingState(gameFrame, that.menu.items[0].text);
+				result = ChangeKeyBindingState(gameFrame, 'left');
+				
+				window.addEventListener('keydown', result.cleanup);
 				
 			}
 			
@@ -181,7 +180,9 @@ Assignment_4.game = (function(menu, frame, input) {
 				
 				window.addEventListener('keydown', input.changeRight);
 				
-				result = ChangeKeyBindingState(gameFrame, that.menu.items[1].text);
+				result = ChangeKeyBindingState(gameFrame, 'right');
+				
+				window.addEventListener('keydown', result.cleanup);
 				
 			}
 			
@@ -192,7 +193,9 @@ Assignment_4.game = (function(menu, frame, input) {
 				
 				window.addEventListener('keydown', input.changeRotateLeft);
 				
-				result = ChangeKeyBindingState(gameFrame, that.menu.items[2].text);
+				result = ChangeKeyBindingState(gameFrame, 'rotate left');
+				
+				window.addEventListener('keydown', result.cleanup);
 				
 			}
 			
@@ -203,7 +206,9 @@ Assignment_4.game = (function(menu, frame, input) {
 				
 				window.addEventListener('keydown', input.changeRotateRight);
 				
-				result = ChangeKeyBindingState(gameFrame, that.menu.items[3].text);
+				result = ChangeKeyBindingState(gameFrame, 'rotate right');
+				
+				window.addEventListener('keydown', result.cleanup);
 				
 			}
 			
@@ -214,7 +219,9 @@ Assignment_4.game = (function(menu, frame, input) {
 				
 				window.addEventListener('keydown', input.changeDown);
 				
-				result = ChangeKeyBindingState(gameFrame, that.menu.items[4].text);
+				result = ChangeKeyBindingState(gameFrame, 'soft drop');
+				
+				window.addEventListener('keydown', result.cleanup);
 				
 			}
 			
@@ -225,7 +232,9 @@ Assignment_4.game = (function(menu, frame, input) {
 				
 				window.addEventListener('keydown', input.changeUp);
 				
-				result = ChangeKeyBindingState(gameFrame, that.menu.items[5].text);
+				result = ChangeKeyBindingState(gameFrame, 'hard drop');
+				
+				window.addEventListener('keydown', result.cleanup);
 				
 			}
 			
@@ -242,67 +251,67 @@ Assignment_4.game = (function(menu, frame, input) {
 		that.render = function(context) {
 			//left
 			if(input.controls.newKeyLeft === undefined){
-				that.menu.items[0].text = controls[0]+": "+input.controls.prevKeyLeft;
+				that.menu.items[0].text = controls[0]+": "+input.KeyTranslation[input.controls.prevKeyLeft.toString()];
 				
 			}
 			
 			else{
-				that.menu.items[0].text = controls[0]+": "+input.controls.newKeyLeft;
+				that.menu.items[0].text = controls[0]+": "+input.KeyTranslation[input.controls.newKeyLeft.toString()];
 				
 			}
 		
 			//right
 			if(input.controls.newKeyRight === undefined){
-				that.menu.items[1].text = controls[1]+": "+input.controls.prevKeyRight;
+				that.menu.items[1].text = controls[1]+": "+input.KeyTranslation[input.controls.prevKeyRight.toString()];
 				
 			}
 			
 			else{
-				that.menu.items[1].text = controls[1]+": "+input.controls.newKeyRight;
+				that.menu.items[1].text = controls[1]+": "+input.KeyTranslation[input.controls.newKeyRight.toString()];
 				
 			}
 			
 			//rotate left
 			if(input.controls.newKeyRotateLeft === undefined){
-				that.menu.items[2].text = controls[2]+": "+input.controls.prevKeyRotateLeft;
+				that.menu.items[2].text = controls[2]+": "+input.KeyTranslation[input.controls.prevKeyRotateLeft.toString()];
 				
 			}
 			
 			else{
-				that.menu.items[2].text = controls[2]+": "+input.controls.newKeyRotateLeft;
+				that.menu.items[2].text = controls[2]+": "+input.KeyTranslation[input.controls.newKeyRotateLeft.toString()];
 				
 			}
 			
 			//rotate right
 			if(input.controls.newKeyRotateRight === undefined){
-				that.menu.items[3].text = controls[3]+": "+input.controls.prevKeyRotateRight;
+				that.menu.items[3].text = controls[3]+": "+input.KeyTranslation[input.controls.prevKeyRotateRight.toString()];
 				
 			}
 			
 			else{
-				that.menu.items[3].text = controls[3]+": "+input.controls.newKeyRotateRight;
+				that.menu.items[3].text = controls[3]+": "+input.KeyTranslation[input.controls.newKeyRotateRight.toString()];
 				
 			}
 			
 			//soft drop
 			if(input.controls.newKeyDown === undefined){
-				that.menu.items[4].text = controls[4]+": "+input.controls.prevKeyDown;
+				that.menu.items[4].text = controls[4]+": "+input.KeyTranslation[input.controls.prevKeyDown.toString()];
 				
 			}
 			
 			else{
-				that.menu.items[4].text = controls[4]+": "+input.controls.newKeyDown;
+				that.menu.items[4].text = controls[4]+": "+input.KeyTranslation[input.controls.newKeyDown.toString()];
 				
 			}
 			
 			//hard drop
 			if(input.controls.newKeyUp === undefined){
-				that.menu.items[5].text = controls[5]+": "+input.controls.prevKeyUp;
+				that.menu.items[5].text = controls[5]+": "+input.KeyTranslation[input.controls.prevKeyUp.toString()];
 				
 			}
 			
 			else{
-				that.menu.items[5].text = controls[5]+": "+input.controls.newKeyUp;
+				that.menu.items[5].text = controls[5]+": "+input.KeyTranslation[input.controls.newKeyUp.toString()];
 				
 			}
 			
@@ -316,7 +325,7 @@ Assignment_4.game = (function(menu, frame, input) {
 	
 	function ChangeKeyBindingState(gameFrame, item) {
 		var that = {
-				menu : menu.Menu('press key to change', [item], 'cancel', 100, gameFrame.width, gameFrame.height-100, false),
+				menu : menu.Menu('press key to change', [item], 'return', 100, gameFrame.width, gameFrame.height-100, false),
 				dead : false
 			
 			};
@@ -329,7 +338,6 @@ Assignment_4.game = (function(menu, frame, input) {
 			
 			var result = null;
 			
-			//change 
 			if(that.menu.footer.clicked == true){
 				//console.log("display keybindings!");
 				that.dead = true;
@@ -339,6 +347,11 @@ Assignment_4.game = (function(menu, frame, input) {
 			return result;
 			
 		};
+		
+		that.cleanup = function(e) {
+			that.dead = true;
+			
+		}
 		
 		that.render = function(context) {
 			that.menu.render(context);
