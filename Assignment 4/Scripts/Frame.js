@@ -55,7 +55,7 @@ Assignment_4.frame = (function() {
 				y : 0,
 				width : 0,
 				height : 0,
-				imageWidth : 480,
+				imageWidth : 640,
 				imageHeight : 600
 				
 			}

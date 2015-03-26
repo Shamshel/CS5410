@@ -88,7 +88,7 @@ Assignment_4.menu = (function() {
 			    borderR = 20;
 
 			    if (that.text !== '') {
-			        roundRect(borderX, borderY, borderW, borderH, borderR, context);
+			        roundRect(borderX, borderY, borderW, borderH, borderR, 'darkblue', 'blue', context);
 			    }
 			}
 		    //-------------------------------------------------------------------------------
@@ -109,13 +109,13 @@ Assignment_4.menu = (function() {
 	}
 	
 	function Menu(title, items, footer, top, width, height, borderF) {
-		var titleSize = 80,
-			footerSize = 14,
+		var titleSize = 70,
+			footerSize = 18,
 			itemSize = 40,
 			that = {
-			title : MenuItem(title, titleSize, 60, width,borderF),
+			title : MenuItem(title, titleSize, 60, width, borderF),
 			items : [],
-			footer : MenuItem(footer, footerSize, (top+height)-footerSize, width,borderF)
+			footer : MenuItem(footer, footerSize, (top+height)-footerSize, width, borderF)
 			
 		};
 		
@@ -123,7 +123,7 @@ Assignment_4.menu = (function() {
 		var i = 0;
 		
 		for(i = 0; i < items.length; i++){
-			that.items.push(MenuItem(items[i], itemSize, top+(space*(i+1)), width,borderF));
+			that.items.push(MenuItem(items[i], itemSize, top+(space*(i+1)), width, borderF));
 			//console.log(space);
 			//console.log(top+(space*(i+1)));
 			
@@ -142,7 +142,12 @@ Assignment_4.menu = (function() {
 		};
 		
 		that.render = function(context){
-			that.title.render(context);
+
+		   if (borderF === false) {
+		        roundRect(width / 10, 0, width / 1.25, height + 100, 20, 'rgba(0,0,139,0)', 'rgba(0,0,139,0.7)', context);
+		    }
+
+		    that.title.render(context);
 			
 			for(i = 0; i<that.items.length; i++){
 				that.items[i].render(context);
@@ -150,6 +155,7 @@ Assignment_4.menu = (function() {
 			}
 			
 			that.footer.render(context);
+		
 			
 		};
 		
@@ -161,13 +167,13 @@ Assignment_4.menu = (function() {
     //Function used to draw rounded Rectangles
     //Not sure where to put this function
     //---------------------------------------------------
-	function roundRect(x, y, w, h, radius, context) {
+	function roundRect(x, y, w, h, radius, borderC, fillC, context) {
 	    var r = x + w;
 	    var b = y + h;
 	    context.save();
 	    context.beginPath();
-	    context.strokeStyle = 'darkblue';
-	    context.fillStyle = 'blue';
+	    context.strokeStyle = borderC;
+	    context.fillStyle = fillC;
 	    context.lineWidth = "6";
 	    context.moveTo(x + radius, y);
 	    context.lineTo(r - radius, y);
@@ -189,7 +195,8 @@ Assignment_4.menu = (function() {
 	
 	return {
 		Menu : Menu,
-		MenuItem : MenuItem
+		MenuItem: MenuItem,
+        roundRect: roundRect
 		
 	};
 	

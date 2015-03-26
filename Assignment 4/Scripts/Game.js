@@ -85,10 +85,14 @@ Assignment_4.game = (function(menu, frame, input) {
 		return that;
 
 	}
-	
+    //--------------------------------------------------------------
+    //
+    //          Main Menu State
+    //
+    //--------------------------------------------------------------
 	function MainMenuState(gameFrame) {
 		var that = {
-				mainMenu : menu.Menu('', ['Current Keybindings'], '', 100, gameFrame.width, gameFrame.height-100, true),
+				mainMenu : menu.Menu('', ['New Game', 'Configure Controls', 'High Scores', 'Credits'], '', 100, gameFrame.width, gameFrame.height-100, true),
 				dead : false
 			
 			};
@@ -111,10 +115,41 @@ Assignment_4.game = (function(menu, frame, input) {
 				that.mainMenu.items[0].selected = false;
 				that.mainMenu.items[0].clicked = false;
 				
-				result = DisplayKeybindingMenuState(gameFrame);
+				result = DisplayGamePlayMenuState(gameFrame);
 				
 			}
+
+		    //display keybindings
+			else if (that.mainMenu.items[1].clicked == true) {
+			    //console.log("display keybindings!");
+
+			    that.mainMenu.items[1].selected = false;
+			    that.mainMenu.items[1].clicked = false;
+
+			    result = DisplayKeybindingMenuState(gameFrame);
+
+			}
+
+			else if (that.mainMenu.items[2].clicked == true) {
+			    //console.log("display keybindings!");
+
+			    that.mainMenu.items[2].selected = false;
+			    that.mainMenu.items[2].clicked = false;
+
+			    result = DisplayHighScoresMenuState(gameFrame);
+
+			}
 			
+			else if (that.mainMenu.items[3].clicked == true) {
+			    //console.log("display keybindings!");
+
+			    that.mainMenu.items[3].selected = false;
+			    that.mainMenu.items[3].clicked = false;
+
+			    result = DisplayCreditsMenuState(gameFrame);
+
+			}
+
 			return result;
 			
 		};
@@ -128,6 +163,30 @@ Assignment_4.game = (function(menu, frame, input) {
 		
 	}
 
+    //--------------------------------------------------------------
+    //          GAME PLAY MENU
+    //
+    //              --> Sub Menu of: 'MainMenuState'
+    //--------------------------------------------------------------
+	function DisplayGamePlayMenuState(gameFrame) {
+	    var that = {};
+
+	    that.update = function (elapsedTime) {
+
+	    }
+
+	    that.render = function (context) {
+
+	    }
+
+	    return that;
+	}
+
+    //--------------------------------------------------------------
+    //          Display Keybinding Menu State
+    //
+    //              --> Sub Menu of: 'MainMenuState'
+    //--------------------------------------------------------------
 	function DisplayKeybindingMenuState(gameFrame) {
 		var controls = ['left', 'right', 'rotate left', 'rotate right', 'soft drop', 'hard drop'];
 		
@@ -323,6 +382,11 @@ Assignment_4.game = (function(menu, frame, input) {
 		
 	}
 	
+    //--------------------------------------------------------------
+    //          Change Key Binding State
+    //
+    //              --> Sub Menu of: 'DisplayKeybindingMenuState'
+    //--------------------------------------------------------------
 	function ChangeKeyBindingState(gameFrame, item) {
 		var that = {
 				menu : menu.Menu('press key to change', [item], 'return', 100, gameFrame.width, gameFrame.height-100, false),
@@ -361,6 +425,92 @@ Assignment_4.game = (function(menu, frame, input) {
 		
 		return that;
 		
+	}
+
+    //--------------------------------------------------------------
+    //          Display High Scores Menu State
+    //
+    //              --> Sub Menu of: 'MainMenuState'
+    //--------------------------------------------------------------
+
+	function DisplayHighScoresMenuState(gameFrame) {
+	    var highScoreNumbers = ['1st:', '2nd:', '3rd:', '4th:', '5th:', '6th:'];
+
+	    var that = {
+	        menu: menu.Menu('High Scores', highScoreNumbers, 'return', 100, gameFrame.width, gameFrame.height - 100, false),
+	        dead: false
+
+	    };
+
+	    that.update = function (elapsedTime) {
+	        mouse = input.Mouse();
+
+	        mouse.registerCommand('mousemove', that.menu.footer.mouseOver);
+	        mouse.registerCommand('mousedown', that.menu.footer.click);
+
+	        var result = null;
+
+	        //return 
+	        if (that.menu.footer.clicked == true) {
+	            that.dead = true;
+
+	        }
+
+	        return result;
+
+	    };
+
+	    that.render = function (context) {
+	
+	        that.menu.render(context);
+
+	    };
+
+	    return that;
+
+	}
+
+    //--------------------------------------------------------------
+    //          Display Credits Menu State
+    //
+    //              --> Sub Menu of: 'MainMenuState'
+    //--------------------------------------------------------------
+
+	function DisplayCreditsMenuState(gameFrame) {
+	    var credNames = ['Cody Herndon', 'Justin Cox', 'For CS 5410'];
+
+	    var that = {
+	        menu: menu.Menu('Created By:', credNames, 'return', 100, gameFrame.width, gameFrame.height - 100, false),
+	        dead: false
+
+	    };
+
+	    that.update = function (elapsedTime) {
+	        mouse = input.Mouse();
+
+	        mouse.registerCommand('mousemove', that.menu.footer.mouseOver);
+	        mouse.registerCommand('mousedown', that.menu.footer.click);
+
+	        var result = null;
+
+	        //return 
+	        if (that.menu.footer.clicked == true) {
+	            that.dead = true;
+
+	        }
+
+	        return result;
+
+	    };
+
+	    that.render = function (context) {
+
+	        that.menu.render(context);
+
+	    };
+
+	    return that;
+
 	}
 	
 	return {
