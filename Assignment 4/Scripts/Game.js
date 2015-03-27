@@ -184,7 +184,8 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 		gameFrame.renderBorder = true;
 
 	    that.update = function (elapsedTime) {
-			that.gameEngine.update(elapsedTime);
+            
+	        that.gameEngine.update(elapsedTime);
 		
 	    }
 

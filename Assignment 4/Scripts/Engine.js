@@ -263,7 +263,7 @@ Assignment_4.engine = (function() {
 	function InvLTet() {
 		//orange
 		var that = {
-				grid: [[undefined, undefined, GreenBlock(), undefined], [GreenBlock(), GreenBlock(), GreenBlock(), undefined]]
+		    grid: [[undefined, undefined, OrangeBlock(), undefined], [OrangeBlock(), OrangeBlock(), OrangeBlock(), undefined]]
 			
 			};
 		
@@ -355,7 +355,7 @@ Assignment_4.engine = (function() {
 		
 		//returns a random block
 		function spawnBlock() {
-			var blockNum = Math.floor(Math.random()*7);
+		    var blockNum = Math.floor(Math.random()*7);
 			var result = undefined;
 			
 			if(blockNum == 0){
@@ -409,7 +409,7 @@ Assignment_4.engine = (function() {
 			console.log("dropping ("+x+", "+y+")");
 			that.grid[y][x].touched = 1;
 			
-			if(that.grid[y][x].bind.down = true && y+1 < that.gridHeight){
+			if(that.grid[y][x].bind.down == true && y+1 < that.gridHeight){
 				if(that.grid[y+1][x] != undefined && that.grid[y+1][x].touched != 1){
 					dropBlock(x, y+1);
 					
@@ -417,7 +417,7 @@ Assignment_4.engine = (function() {
 				
 			}
 			
-			if(that.grid[y][x].bind.right = true && x+1 < that.gridWidth){
+			if(that.grid[y][x].bind.right == true && x+1 < that.gridWidth){
 				if(that.grid[y][x+1] != undefined && that.grid[y][x+1].touched != 1){
 					dropBlock(x+1, y);
 					
@@ -425,7 +425,7 @@ Assignment_4.engine = (function() {
 				
 			}
 			
-			if(that.grid[y][x].bind.left = true && x-1 >= 0){
+			if(that.grid[y][x].bind.left == true && x-1 >= 0){
 				if(that.grid[y][x-1] != undefined && that.grid[y][x-1].touched != 1){
 					dropBlock(x-1, y);
 					
@@ -433,11 +433,12 @@ Assignment_4.engine = (function() {
 				
 			}
 			
-			//drop this block
-			that.grid[y+1][x] = that.grid[y][x];
+		    //drop this block
+			that.grid[y + 1][x] = that.grid[y][x];
 			that.grid[y][x] = undefined;
 			
-			if(that.grid[y+1][x].bind.up = true && y-1 >= 0){
+			
+			if(that.grid[y+1][x].bind.up == true && y-1 >= 0){
 				if(that.grid[y-1][x] != undefined && that.grid[y-1][x].touched != 1){
 					dropBlock(x, y-1);
 					
@@ -451,7 +452,7 @@ Assignment_4.engine = (function() {
 			console.log("moving ("+x+", "+y+") left");
 			that.grid[y][x].touched = 1;
 			
-			if(that.grid[y][x].bind.down = true && y+1 < that.gridHeight){
+			if(that.grid[y][x].bind.down == true && y+1 < that.gridHeight){
 				if(that.grid[y+1][x] != undefined && that.grid[y+1][x].touched != 1){
 					moveBlockLeft(x, y+1);
 					
@@ -459,7 +460,7 @@ Assignment_4.engine = (function() {
 				
 			}
 			
-			if(that.grid[y][x].bind.up = true && y-1 >= 0){
+			if(that.grid[y][x].bind.up == true && y-1 >= 0){
 				if(that.grid[y-1][x] != undefined && that.grid[y-1][x].touched != 1){
 					moveBlockLeft(x, y-1);
 					
@@ -467,7 +468,7 @@ Assignment_4.engine = (function() {
 				
 			}
 			
-			if(that.grid[y][x].bind.left = true && x-1 >= 0){
+			if(that.grid[y][x].bind.left == true && x-1 >= 0){
 				if(that.grid[y][x-1] != undefined && that.grid[y][x-1].touched != 1){
 					moveBlockLeft(x-1, y);
 					
@@ -479,7 +480,7 @@ Assignment_4.engine = (function() {
 			that.grid[y][x-1] = that.grid[y][x];
 			that.grid[y][x] = undefined;
 			
-			if(that.grid[y][x-1].bind.right = true && x+1 < that.gridWidth){
+			if(that.grid[y][x-1].bind.right == true && x+1 < that.gridWidth){
 				if(that.grid[y][x+1] != undefined && that.grid[y][x+1].touched != 1){
 					moveBlockLeft(x+1, y);
 					
@@ -493,7 +494,7 @@ Assignment_4.engine = (function() {
 			console.log("moving ("+x+", "+y+") right");
 			that.grid[y][x].touched = 1;
 			
-			if(that.grid[y][x].bind.down = true && y+1 < that.gridHeight){
+			if(that.grid[y][x].bind.down == true && y+1 < that.gridHeight){
 				if(that.grid[y+1][x] != undefined && that.grid[y+1][x].touched != 1){
 					moveBlockLeft(x, y+1);
 					
@@ -501,7 +502,7 @@ Assignment_4.engine = (function() {
 				
 			}
 			
-			if(that.grid[y][x].bind.up = true && y-1 >= 0){
+			if(that.grid[y][x].bind.up == true && y-1 >= 0){
 				if(that.grid[y-1][x] != undefined && that.grid[y-1][x].touched != 1){
 					moveBlockLeft(x, y-1);
 					
@@ -509,7 +510,7 @@ Assignment_4.engine = (function() {
 				
 			}
 			
-			if(that.grid[y][x].bind.right = true && x+1 < that.gridWidth){
+			if(that.grid[y][x].bind.right == true && x+1 < that.gridWidth){
 				if(that.grid[y][x+1] != undefined && that.grid[y][x+1].touched != 1){
 					moveBlockLeft(x+1, y);
 					
@@ -521,7 +522,7 @@ Assignment_4.engine = (function() {
 			that.grid[y][x+1] = that.grid[y][x];
 			that.grid[y][x] = undefined;
 			
-			if(that.grid[y][x+1].bind.left = true && x-1 >= 0){
+			if(that.grid[y][x+1].bind.left == true && x-1 >= 0){
 				if(that.grid[y][x-1] != undefined && that.grid[y][x-1].touched != 1){
 					moveBlockLeft(x-1, y);
 					
