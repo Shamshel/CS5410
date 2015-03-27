@@ -254,6 +254,8 @@ if (typeof KeyTranslation === 'undefined') {
 Assignment_4.input = (function() {
 	'use strict';
 	
+	console.log("initializing input!");
+	
 	function Mouse() {
 		var that = {
 				mouseDown : [],

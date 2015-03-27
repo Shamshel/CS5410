@@ -1,6 +1,8 @@
 Assignment_4.menu = (function() {
 	'use strict';
 
+	console.log("initializing menu!");
+	
 	//---------------------------------------------------
 	//menu objects
 	//---------------------------------------------------

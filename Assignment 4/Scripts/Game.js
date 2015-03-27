@@ -1,5 +1,7 @@
-Assignment_4.game = (function(menu, frame, input) {
+Assignment_4.game = (function(engine, menu, frame, input) {
 	'use strict';
+
+	console.log("initializing game!");
 	
 	//taken from CS5410 examples
 	//
@@ -11,11 +13,6 @@ Assignment_4.game = (function(menu, frame, input) {
 		this.clearRect(0, 0, canvas.width, canvas.height);
 		this.restore();
 	};
-	
-	if(frame == null){
-		console.log("frame is null!")
-		
-	}
 	
 	var canvas = document.getElementById('content');
 	var	context = canvas.getContext('2d');
@@ -44,7 +41,7 @@ Assignment_4.game = (function(menu, frame, input) {
 			}
 			
 			var result = gameStack[gameStack.length-1].update(elapsedTime);
-			if(result != null){
+			if(result != undefined){
 				gameStack[gameStack.length] = result;
 				
 			}
@@ -74,7 +71,6 @@ Assignment_4.game = (function(menu, frame, input) {
 
 		that.initialize = function() {
 			//the main menu should be the base state
-			console.log("initializing game!");
 			gameFrame.initialize(context);
 			gameStack[gameStack.length] = MainMenuState(gameFrame);
 			
@@ -106,7 +102,7 @@ Assignment_4.game = (function(menu, frame, input) {
 				
 			}
 			
-			var result = null;
+			var result = undefined;
 			
 			//display keybindings
 			if(that.mainMenu.items[0].clicked == true){
@@ -169,14 +165,50 @@ Assignment_4.game = (function(menu, frame, input) {
     //              --> Sub Menu of: 'MainMenuState'
     //--------------------------------------------------------------
 	function DisplayGamePlayMenuState(gameFrame) {
-	    var that = {};
+	    var that = {
+				gameEngine: engine.GameEngine(),
+				gridPxHeight: 0,
+				gridPxWidth: 0
+			
+			};
+			
+		var i,
+			j;
+			
+		that.gridPxHeight = (gameFrame.border.height/that.gameEngine.gridHeight);
+		that.gridPxWidth = (gameFrame.border.width/that.gameEngine.gridWidth);
+			
+		//console.log("border width: "+gameFrame.border.width+" border height: "+gameFrame.border.height);
+		//console.log("grid height: "+that.gameEngine.gridHeight+" width: "+that.gameEngine.gridWidth);
+			
+		gameFrame.renderBorder = true;
 
 	    that.update = function (elapsedTime) {
-
+			that.gameEngine.update(elapsedTime);
+		
 	    }
 
 	    that.render = function (context) {
-
+			//console.log("rendering!");
+			context.save();
+			
+			for(i = 0; i < that.gameEngine.gridHeight; i++){
+				for(j = 0; j < that.gameEngine.gridWidth; j++){
+					//console.log("testing at ("+i+", "+j+")");
+					
+					if(that.gameEngine.grid[i][j] != undefined){
+						//console.log("drawing at x: "+gameFrame.border.x+(that.gridPxWidth*j)+" y: "+gameFrame.border.y+(that.gridPxHeight*i));
+						//console.log("image src: "+that.gameEngine.grid[i][j].image);
+						context.drawImage(that.gameEngine.grid[i][j].image, gameFrame.border.x+(that.gridPxWidth*j), gameFrame.border.y+(that.gridPxHeight*i), that.gridPxWidth, that.gridPxHeight);
+						
+					}
+					
+				}
+				
+			}
+			
+			context.restore();
+		
 	    }
 
 	    return that;
@@ -208,7 +240,7 @@ Assignment_4.game = (function(menu, frame, input) {
 			mouse.registerCommand('mousemove', that.menu.footer.mouseOver);
 			mouse.registerCommand('mousedown', that.menu.footer.click);
 			
-			var result = null;
+			var result = undefined;
 			
 			window.removeEventListener('keydown', input.changeLeft);
 			window.removeEventListener('keydown', input.changeRight);
@@ -400,7 +432,7 @@ Assignment_4.game = (function(menu, frame, input) {
 			mouse.registerCommand('mousemove', that.menu.footer.mouseOver);
 			mouse.registerCommand('mousedown', that.menu.footer.click);
 			
-			var result = null;
+			var result = undefined;
 			
 			if(that.menu.footer.clicked == true){
 				//console.log("display keybindings!");
@@ -448,7 +480,7 @@ Assignment_4.game = (function(menu, frame, input) {
 	        mouse.registerCommand('mousemove', that.menu.footer.mouseOver);
 	        mouse.registerCommand('mousedown', that.menu.footer.click);
 
-	        var result = null;
+	        var result = undefined;
 
 	        //return 
 	        if (that.menu.footer.clicked == true) {
@@ -491,7 +523,7 @@ Assignment_4.game = (function(menu, frame, input) {
 	        mouse.registerCommand('mousemove', that.menu.footer.mouseOver);
 	        mouse.registerCommand('mousedown', that.menu.footer.click);
 
-	        var result = null;
+	        var result = undefined;
 
 	        //return 
 	        if (that.menu.footer.clicked == true) {
@@ -514,9 +546,8 @@ Assignment_4.game = (function(menu, frame, input) {
 	}
 	
 	return {
-		Game : Game,
-		MainMenuState : MainMenuState
+		Game : Game
 		
 	};
 	
-}(Assignment_4.menu, Assignment_4.frame, Assignment_4.input));
+}(Assignment_4.engine, Assignment_4.menu, Assignment_4.frame, Assignment_4.input));

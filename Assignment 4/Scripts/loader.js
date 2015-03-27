@@ -22,10 +22,18 @@ window.addEventListener('load', function() {
 	Modernizr.load([
 		{
 			load : [
-                'preload!Media/Tetris.png',
+				'preload!Media/blueBlock.png',
+				'preload!Media/greenBlock.png',
+				'preload!Media/lightBlueBlock.png',
+				'preload!Media/orangeBlock.png',
+				'preload!Media/pinkBlock.png',
+				'preload!Media/redBlock.png',
+				'preload!Media/yellowBlock.png',
+				'preload!Media/Tetris.png',
                 'preload!scripts/Menu.js',
 				'preload!scripts/Input.js',
 				'preload!scripts/Frame.js',
+				'preload!scripts/Engine.js',
 				'preload!scripts/Game.js',
 				'preload!scripts/Assignment_4.js'
 			],

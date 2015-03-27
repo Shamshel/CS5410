@@ -1,5 +1,7 @@
 Assignment_4.frame = (function() {
 	'use strict';
+	
+	console.log("initializing frame!");
 
 	//Border object
 	function Border(){
@@ -25,13 +27,13 @@ Assignment_4.frame = (function() {
 
 			context.beginPath();
 			context.lineWidth = '6';
-			context.strokeStyle = 'yellow';
+			context.strokeStyle = 'black';
 			context.rect(that.x, that.y, that.width, that.height);
 			
 			context.stroke();
 			
-			//draw black background
-			context.fillStyle = 'black';
+			//draw white background
+			context.fillStyle = 'lightblue';
 			context.fillRect(that.x, that.y, that.width, that.height);
 			
 			context.restore();
@@ -105,7 +107,7 @@ Assignment_4.frame = (function() {
 			that.image.x = that.width/2-(that.image.width/2);			
 			
 			//center internal border
-			that.border.initialize(that.width/8, that.height/8, that.width*(3/4), that.height*(3/4));
+			that.border.initialize(that.width/4, that.height/8, that.width*(1/4), that.height*(3/4));
 			
 		};
 		
@@ -113,8 +115,11 @@ Assignment_4.frame = (function() {
 			//render background image
 			context.drawImage(that.image.src, that.image.x, that.image.y, that.image.width, that.image.height);
 				
-			//render background border	
-		    //that.border.render(context);
+			//render internal border
+			if(that.renderBorder == true){
+				that.border.render(context);
+				
+			}
 		    
 		};
 		
