@@ -171,6 +171,66 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 				gridPxWidth: 0
 			
 			};
+
+		if(input.newKeyUp == undefined){
+			keyboard.registerCommand(input.controls.prevKeyUp, that.gameEngine.hardDrop);
+			
+		}
+		
+		else{
+			keyboard.registerCommand(input.controls.newKeyUp, that.gameEngine.hardDrop);
+		
+		}
+		
+		if(input.newKeyDown == undefined){
+			keyboard.registerCommand(input.controls.prevKeyDown, that.gameEngine.softDrop);
+			
+		}
+		
+		else{
+			keyboard.registerCommand(input.controls.newKeyDown, that.gameEngine.softDrop);
+		
+		}
+		
+		if(input.newKeyLeft == undefined){
+			keyboard.registerCommand(input.controls.prevKeyLeft, that.gameEngine.moveLeft);
+			
+		}
+		
+		else{
+			keyboard.registerCommand(input.controls.newKeyLeft, that.gameEngine.moveLeft);
+		
+		}
+		
+		if(input.newKeyRight == undefined){
+			keyboard.registerCommand(input.controls.prevKeyRight, that.gameEngine.moveRight);
+			
+		}
+		
+		else{
+			keyboard.registerCommand(input.controls.newKeyRight, that.gameEngine.moveRight);
+		
+		}
+		
+		if(input.newKeyRotateLeft == undefined){
+			keyboard.registerCommand(input.controls.prevKeyRotateLeft, that.gameEngine.rotateLeft);
+			
+		}
+		
+		else{
+			keyboard.registerCommand(input.controls.newKeyRotateLeft, that.gameEngine.rotateLeft);
+		
+		}
+		
+		if(input.newKeyRotateRight == undefined){
+			keyboard.registerCommand(input.controls.prevKeyRotateRight, that.gameEngine.rotateRight);
+			
+		}
+		
+		else{
+			keyboard.registerCommand(input.controls.newKeyRotateRight, that.gameEngine.rotateRight);
+		
+		}
 			
 		var i,
 			j;

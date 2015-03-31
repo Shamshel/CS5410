@@ -218,7 +218,7 @@ Assignment_4.engine = (function() {
 			
 		//bind top left
 		that.grid[0][1].bind.right = true;
-		that.grid[0][1].bind.bottom = true;
+		that.grid[0][1].bind.down = true;
 		
 		//bind top right
 		that.grid[0][2].bind.left = true;
@@ -228,7 +228,7 @@ Assignment_4.engine = (function() {
 		
 		//bind bottom right
 		that.grid[1][1].bind.left = true;
-		that.grid[1][1].bind.top = true;
+		that.grid[1][1].bind.up = true;
 		
 		return that;
 		
@@ -246,7 +246,7 @@ Assignment_4.engine = (function() {
 		
 		//bind top right
 		that.grid[0][1].bind.left = true;
-		that.grid[0][1].bind.right = true;
+		that.grid[0][1].bind.down = true;
 		
 		//bind bottom left
 		that.grid[1][1].bind.right = true;
@@ -260,7 +260,7 @@ Assignment_4.engine = (function() {
 		
 	}
 	
-	function InvLTet() {
+	function OutJTet() {
 		//orange
 		var that = {
 		    grid: [[undefined, undefined, OrangeBlock(), undefined], [OrangeBlock(), OrangeBlock(), OrangeBlock(), undefined]]
@@ -285,7 +285,7 @@ Assignment_4.engine = (function() {
 		
 	}
 	
-	function OutJTet() {
+	function InvLTet() {
 		//blue
 		var that = {
 				grid: [[BlueBlock(), undefined, undefined, undefined], [BlueBlock(), BlueBlock(), BlueBlock(), undefined]]
@@ -404,43 +404,77 @@ Assignment_4.engine = (function() {
 			
 		}
 		
-		function dropBlock(x, y){		
+		function dropBlock(x, y){
 			//DFS
 			console.log("dropping ("+x+", "+y+")");
 			that.grid[y][x].touched = 1;
 			
-			if(that.grid[y][x].bind.down == true && y+1 < that.gridHeight){
-				if(that.grid[y+1][x] != undefined && that.grid[y+1][x].touched != 1){
-					dropBlock(x, y+1);
+			if(that.grid[y+1][x] == undefined){
+				//drop this block
+				that.grid[y + 1][x] = that.grid[y][x];
+				that.grid[y][x] = undefined;
+			
+				if(that.grid[y+1][x].bind.right == true && x+1 < that.gridWidth){
+					if(that.grid[y][x+1] != undefined && that.grid[y][x+1].touched != 1){
+						dropBlock(x+1, y);
+					
+					}
+				
+				}
+			
+				if(that.grid[y+1][x].bind.left == true && x-1 >= 0){
+					if(that.grid[y][x-1] != undefined && that.grid[y][x-1].touched != 1){
+						dropBlock(x-1, y);
+					
+					}
+				
+				}			
+			
+				if(that.grid[y+1][x].bind.up == true && y-1 >= 0){
+					if(that.grid[y-1][x] != undefined && that.grid[y-1][x].touched != 1){
+						dropBlock(x, y-1);
+					
+					}
 					
 				}
 				
 			}
 			
-			if(that.grid[y][x].bind.right == true && x+1 < that.gridWidth){
-				if(that.grid[y][x+1] != undefined && that.grid[y][x+1].touched != 1){
-					dropBlock(x+1, y);
+			else{
+				if(that.grid[y][x].bind.down == true && y+1 < that.gridHeight){
+					if(that.grid[y+1][x] != undefined && that.grid[y+1][x].touched != 1){
+						dropBlock(x, y+1);
 					
-				}
+					}
 				
-			}
+				}
 			
-			if(that.grid[y][x].bind.left == true && x-1 >= 0){
-				if(that.grid[y][x-1] != undefined && that.grid[y][x-1].touched != 1){
-					dropBlock(x-1, y);
+				if(that.grid[y][x].bind.right == true && x+1 < that.gridWidth){
+					if(that.grid[y][x+1] != undefined && that.grid[y][x+1].touched != 1){
+						dropBlock(x+1, y);
 					
-				}
+					}
 				
-			}
+				}
 			
-		    //drop this block
-			that.grid[y + 1][x] = that.grid[y][x];
-			that.grid[y][x] = undefined;
+				if(that.grid[y][x].bind.left == true && x-1 >= 0){
+					if(that.grid[y][x-1] != undefined && that.grid[y][x-1].touched != 1){
+						dropBlock(x-1, y);
+					
+					}
+				
+				}
+			
+				//drop this block
+				that.grid[y + 1][x] = that.grid[y][x];
+				that.grid[y][x] = undefined;
 			
 			
-			if(that.grid[y+1][x].bind.up == true && y-1 >= 0){
-				if(that.grid[y-1][x] != undefined && that.grid[y-1][x].touched != 1){
-					dropBlock(x, y-1);
+				if(that.grid[y+1][x].bind.up == true && y-1 >= 0){
+					if(that.grid[y-1][x] != undefined && that.grid[y-1][x].touched != 1){
+						dropBlock(x, y-1);
+					
+					}
 					
 				}
 				
@@ -452,38 +486,79 @@ Assignment_4.engine = (function() {
 			console.log("moving ("+x+", "+y+") left");
 			that.grid[y][x].touched = 1;
 			
-			if(that.grid[y][x].bind.down == true && y+1 < that.gridHeight){
-				if(that.grid[y+1][x] != undefined && that.grid[y+1][x].touched != 1){
-					moveBlockLeft(x, y+1);
+			if(that.grid[y][x-1] == undefined){
+				that.grid[y][x-1] = that.grid[y][x];
+				that.grid[y][x] = undefined;
+				
+				if(that.grid[y][x-1].bind.down == true && y+1 < that.gridHeight){
+					if(that.grid[y+1][x] != undefined && that.grid[y+1][x].touched != 1){
+						moveBlockLeft(x, y+1);
 					
+					}
+				
+				}
+			
+				if(that.grid[y][x-1].bind.up == true && y-1 >= 0){
+					if(that.grid[y-1][x] != undefined && that.grid[y-1][x].touched != 1){
+						moveBlockLeft(x, y-1);
+					
+					}
+				
+				}
+			
+				if(that.grid[y][x-1].bind.left == true && x-1 >= 0){
+					if(that.grid[y][x-1] != undefined && that.grid[y][x-1].touched != 1){
+						moveBlockLeft(x-1, y);
+					
+					}
+				
+				}
+			
+				if(that.grid[y][x-1].bind.right == true && x+1 < that.gridWidth){
+					if(that.grid[y][x+1] != undefined && that.grid[y][x+1].touched != 1){
+						moveBlockLeft(x+1, y);
+					
+					}
+				
 				}
 				
 			}
 			
-			if(that.grid[y][x].bind.up == true && y-1 >= 0){
-				if(that.grid[y-1][x] != undefined && that.grid[y-1][x].touched != 1){
-					moveBlockLeft(x, y-1);
+			else{
+				if(that.grid[y][x].bind.down == true && y+1 < that.gridHeight){
+					if(that.grid[y+1][x] != undefined && that.grid[y+1][x].touched != 1){
+						moveBlockLeft(x, y+1);
 					
-				}
+					}
 				
-			}
-			
-			if(that.grid[y][x].bind.left == true && x-1 >= 0){
-				if(that.grid[y][x-1] != undefined && that.grid[y][x-1].touched != 1){
-					moveBlockLeft(x-1, y);
-					
 				}
-				
-			}
 			
-			//move this block
-			that.grid[y][x-1] = that.grid[y][x];
-			that.grid[y][x] = undefined;
-			
-			if(that.grid[y][x-1].bind.right == true && x+1 < that.gridWidth){
-				if(that.grid[y][x+1] != undefined && that.grid[y][x+1].touched != 1){
-					moveBlockLeft(x+1, y);
+				if(that.grid[y][x].bind.up == true && y-1 >= 0){
+					if(that.grid[y-1][x] != undefined && that.grid[y-1][x].touched != 1){
+						moveBlockLeft(x, y-1);
 					
+					}
+				
+				}
+			
+				if(that.grid[y][x].bind.left == true && x-1 >= 0){
+					if(that.grid[y][x-1] != undefined && that.grid[y][x-1].touched != 1){
+						moveBlockLeft(x-1, y);
+					
+					}
+				
+				}
+			
+				//move this block
+				that.grid[y][x-1] = that.grid[y][x];
+				that.grid[y][x] = undefined;
+				
+				if(that.grid[y][x-1].bind.right == true && x+1 < that.gridWidth){
+					if(that.grid[y][x+1] != undefined && that.grid[y][x+1].touched != 1){
+						moveBlockLeft(x+1, y);
+					
+					}
+				
 				}
 				
 			}
@@ -494,38 +569,71 @@ Assignment_4.engine = (function() {
 			console.log("moving ("+x+", "+y+") right");
 			that.grid[y][x].touched = 1;
 			
-			if(that.grid[y][x].bind.down == true && y+1 < that.gridHeight){
-				if(that.grid[y+1][x] != undefined && that.grid[y+1][x].touched != 1){
-					moveBlockLeft(x, y+1);
+			if(that.grid[y][x+1] == undefined){
+				that.grid[y][x+1] = that.grid[y][x];
+				that.grid[y][x] = undefined;
+				
+				if(that.grid[y][x+1].bind.down == true && y+1 < that.gridHeight){
+					if(that.grid[y+1][x] != undefined && that.grid[y+1][x].touched != 1){
+						moveBlockRight(x, y+1);
 					
+					}
+				
+				}
+			
+				if(that.grid[y][x+1].bind.up == true && y-1 >= 0){
+					if(that.grid[y-1][x] != undefined && that.grid[y-1][x].touched != 1){
+						moveBlockRight(x, y-1);
+					
+					}
+				
+				}
+			
+				if(that.grid[y][x+1].bind.left == true && x-1 >= 0){
+					if(that.grid[y][x-1] != undefined && that.grid[y][x-1].touched != 1){
+						moveBlockRight(x-1, y);
+					
+					}
+				
 				}
 				
 			}
 			
-			if(that.grid[y][x].bind.up == true && y-1 >= 0){
-				if(that.grid[y-1][x] != undefined && that.grid[y-1][x].touched != 1){
-					moveBlockLeft(x, y-1);
+			else{
+				if(that.grid[y][x].bind.down == true && y+1 < that.gridHeight){
+					if(that.grid[y+1][x] != undefined && that.grid[y+1][x].touched != 1){
+						moveBlockRight(x, y+1);
 					
+					}
+				
+				}
+			
+				if(that.grid[y][x].bind.up == true && y-1 >= 0){
+					if(that.grid[y-1][x] != undefined && that.grid[y-1][x].touched != 1){
+						moveBlockRight(x, y-1);
+					
+					}
+				
 				}
 				
-			}
-			
-			if(that.grid[y][x].bind.right == true && x+1 < that.gridWidth){
-				if(that.grid[y][x+1] != undefined && that.grid[y][x+1].touched != 1){
-					moveBlockLeft(x+1, y);
+				if(that.grid[y][x].bind.right == true && x+1 < that.gridWidth){
+					if(that.grid[y][x+1] != undefined && that.grid[y][x+1].touched != 1){
+						moveBlockRight(x+1, y);
 					
-				}
+					}
 				
-			}
+				}
 			
-			//move this block
-			that.grid[y][x+1] = that.grid[y][x];
-			that.grid[y][x] = undefined;
-			
-			if(that.grid[y][x+1].bind.left == true && x-1 >= 0){
-				if(that.grid[y][x-1] != undefined && that.grid[y][x-1].touched != 1){
-					moveBlockLeft(x-1, y);
+				//move this block
+				that.grid[y][x+1] = that.grid[y][x];
+				that.grid[y][x] = undefined;
+				
+				if(that.grid[y][x+1].bind.left == true && x-1 >= 0){
+					if(that.grid[y][x-1] != undefined && that.grid[y][x-1].touched != 1){
+						moveBlockRight(x-1, y);
 					
+					}
+				
 				}
 				
 			}
@@ -533,12 +641,12 @@ Assignment_4.engine = (function() {
 		}
 		
 		function rotateBlockLeft(x, y) {
-			
+			console.log("rotating ("+x+", "+y+") left");
 			
 		}
 		
 		function rotateBlockRight(x, y) {
-			
+			console.log("rotating ("+x+", "+y+") right");
 			
 		}
 		
@@ -558,33 +666,215 @@ Assignment_4.engine = (function() {
 			
 		}
 		
+		function detectLeftMostEdgeCollision(startX, startY){
+			var found = false;
+			var moved;
+			var thisX = startX;
+			var thisY = startY;
+			
+			while(found == false){
+				moved = false;
+				
+				//move down left
+				if(that.grid[thisY][thisX].bind.left == true && that.grid[thisY][thisX-1] != undefined){
+					moved = true;
+					thisX = thisX-1;
+					
+				}
+				
+				else if(that.grid[thisY][thisX].bind.down == true && that.grid[thisY+1][thisX] != undefined){
+					moved = true;
+					thisY = thisY+1;
+					
+				}
+				
+				if(moved == false){
+					found = true;
+					
+				}
+				
+			}
+			
+			if(thisX-1 < 0){
+				return true;
+				
+			}
+			
+			else if(that.grid[thisY][thisX-1] != undefined){
+				return true;
+				
+			}
+			
+			return false;
+			
+		}
+		
+		function detectRightMostEdgeCollision(startX, startY){
+			var found = false;
+			var moved;
+			var thisX = startX;
+			var thisY = startY;
+			
+			while(found == false){
+				moved = false;
+				
+				//move right down
+				if(that.grid[thisY][thisX].bind.right == true && that.grid[thisY][thisX+1] != undefined){
+					moved = true;
+					thisX = thisX+1;
+					
+				}
+				
+				else if(that.grid[thisY][thisX].bind.down == true && that.grid[thisY+1][thisX] != undefined){
+					moved = true;
+					thisY = thisY+1;
+					
+				}
+				
+				if(moved == false){
+					found = true;
+					
+				}
+				
+			}
+			
+			if(thisX+1 >= that.gridWidth){
+				return true;
+				
+			}
+			
+			else if(that.grid[thisY][thisX+1] != undefined){
+				return true;
+				
+			}
+			
+			return false;
+			
+		}
+		
+		function detectLowestEdgeCollision(startX, startY){
+			var found = false;
+			var moved;
+			var thisX = startX;
+			var thisY = startY;
+			
+			var blockStack = [];
+			
+			blockStack.push({
+				x: startX,
+				y: startY
+				
+			});
+			
+			while(blockStack.length != 0){
+				var point = blockStack.pop();
+				if(that.grid[point.y][point.x].touched == 0){
+					that.grid[point.y][point.x].touched = 1;
+					
+					if(that.grid[point.y][point.x].bind.down == false){
+						//detect bottom edge of grid
+						if(point.y+1 >= that.gridHeight){
+							return true;
+							
+						}
+						
+						//detect block below this one
+						if(that.grid[point.y+1][point.x] != undefined){
+							return true;
+							
+						}
+						
+					}
+					
+					if(that.grid[point.y][point.x].bind.down == true && (point.y+1) < that.gridHeight){
+						if(that.grid[point.y+1][point.x] != undefined){
+							blockStack.push({
+								x: point.x,
+								y: point.y+1
+						
+							});
+							
+						}
+						
+					}
+					
+					if(that.grid[point.y][point.x].bind.up == true && (point.y-1) >= 0){
+						if(that.grid[point.y-1][point.x] != undefined){
+							blockStack.push({
+								x: point.x,
+								y: point.y-1
+						
+							});
+							
+						}
+						
+					}
+					
+					if(that.grid[point.y][point.x].bind.right == true && (point.x+1) < that.gridWidth){
+						if(that.grid[point.y][point.x+1] != undefined){
+							blockStack.push({
+								x: point.x+1,
+								y: point.y
+						
+							});
+							
+						}
+						
+					}
+					
+					if(that.grid[point.y][point.x].bind.left == true && (point.x-1) >= 0){
+						if(that.grid[point.y][point.x-1] != undefined){
+							blockStack.push({
+								x: point.x-1,
+								y: point.y
+						
+							});
+							
+						}
+						
+					}
+					
+				}
+				
+			}
+			
+			return false;
+			
+		}
+		
 		//user controls
 		that.rotateRight = function(elapsedTime) {
+			//console.log("rotate right!");
 			rotRight = true;
 			
 		}
 		
 		that.rotateLeft = function(elapsedTime) {
+			//console.log("rotate left!");
 			rotLeft = true;
 			
 		}
 		
 		that.moveLeft = function(elapsedTime) {
+			//console.log("move left!");
 			movLeft = true;
 			
 		}
 		
 		that.moveRight = function(elaspedTime) {
+			//console.log("move right!");
 			movRight = true;
 			
 		}
 		
 		that.softDrop = function(elapsedTime) {
+			//console.log("soft drop!");
 			softDrp = true;
 			
 		}
 		
 		that.hardDrop = function(elapsedTime) {
+			//console.log("hard drop!");
 			hardDrp = true;
 			
 		}
@@ -617,7 +907,7 @@ Assignment_4.engine = (function() {
 				
 				//center block at top of grid
 				centerBlock.x = 4;
-				centerBlock.y = 1;
+				centerBlock.y = 1;	
 				
 				//copy block into grid
 				for(i = 0; i < 2; i++){
@@ -654,10 +944,44 @@ Assignment_4.engine = (function() {
 			}
 			
 			//move
+			if(movRight == true && movLeft == false){
+				if(detectRightMostEdgeCollision(centerBlock.x, centerBlock.y) == false){
+					cleanGrid();
+					moveBlockRight(centerBlock.x, centerBlock.y);
+					centerBlock.x = centerBlock.x+1;
+					cleanGrid();
+					
+				}
+				
+			}
 			
-			//soft drop
+			else if(movLeft == true && movRight == false){
+				if(detectLeftMostEdgeCollision(centerBlock.x, centerBlock.y) == false){
+					cleanGrid();
+					moveBlockLeft(centerBlock.x, centerBlock.y);
+					centerBlock.x = centerBlock.x-1;
+					cleanGrid();
+					
+				}
+				
+			}
 			
-			//hard drop
+			//drop
+			if(softDrp == true && hardDrp == false){
+				if(detectLowestEdgeCollision(centerBlock.x, centerBlock.y) == false){
+					cleanGrid();
+					dropBlock(centerBlock.x, centerBlock.y);
+					centerBlock.y = centerBlock.y+1;
+					cleanGrid();
+					
+				}
+				
+			}
+			
+			else if(hardDrp == true && softDrp == false){
+				
+				
+			}
 			
 			//reset user inputs
 			rotRight = false;
@@ -667,22 +991,17 @@ Assignment_4.engine = (function() {
 			softDrp = false;
 			hardDrp = false;
 			
-			//drop block by gravity			
-			if(centerBlock.y == (that.gridHeight-1)){
-				centerBlock.dropped = true;
-				
-			}
-			
-			//TODO: replace with lowest block(s) edge detection
-			else if(that.grid[centerBlock.y+1][centerBlock.x] != undefined){
-				centerBlock.dropped = true;
-				
-			}
-			
-			else{
+			//drop block by gravity				
+			if(detectLowestEdgeCollision(centerBlock.x, centerBlock.y) == false){
+				cleanGrid();
 				dropBlock(centerBlock.x, centerBlock.y);
 				centerBlock.y = centerBlock.y+1;
 				cleanGrid();
+					
+			}
+			
+			else{
+				centerBlock.dropped = true;
 				
 			}
 			
