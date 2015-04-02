@@ -48,12 +48,12 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 
 		};
 
-		that.render = function() {
+		that.render = function () {
 			context.clear();
 			
 			gameFrame.render(context);
 			
-			gameStack[gameStack.length-1].render(context);
+			gameStack[gameStack.length - 1].render(context);
 
 
 		};
@@ -111,6 +111,9 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 				that.mainMenu.items[0].selected = false;
 				that.mainMenu.items[0].clicked = false;
 				
+                //TODO: Make it reapeat while in Game Play Menu State
+				Assignment_4.playSound('media/sounds/TetrisSong', 0.05);
+
 				result = DisplayGamePlayMenuState(gameFrame);
 				
 			}
@@ -122,6 +125,8 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 			    that.mainMenu.items[1].selected = false;
 			    that.mainMenu.items[1].clicked = false;
 
+			    Assignment_4.playSound('media/sounds/arcadeSound', 0.75);
+
 			    result = DisplayKeybindingMenuState(gameFrame);
 
 			}
@@ -132,6 +137,8 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 			    that.mainMenu.items[2].selected = false;
 			    that.mainMenu.items[2].clicked = false;
 
+			    Assignment_4.playSound('media/sounds/arcadeSound', 0.75);
+
 			    result = DisplayHighScoresMenuState(gameFrame);
 
 			}
@@ -141,6 +148,8 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 
 			    that.mainMenu.items[3].selected = false;
 			    that.mainMenu.items[3].clicked = false;
+
+			    Assignment_4.playSound('media/sounds/arcadeSound', 0.75);
 
 			    result = DisplayCreditsMenuState(gameFrame);
 
@@ -322,6 +331,8 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 				result = ChangeKeyBindingState(gameFrame, 'left');
 				
 				window.addEventListener('keydown', result.cleanup);
+
+				Assignment_4.playSound('media/sounds/arcadeSound', 0.75);
 				
 			}
 			
@@ -336,6 +347,7 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 				
 				window.addEventListener('keydown', result.cleanup);
 				
+				Assignment_4.playSound('media/sounds/arcadeSound', 0.75);
 			}
 			
 			//rotate left
@@ -349,6 +361,7 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 				
 				window.addEventListener('keydown', result.cleanup);
 				
+				Assignment_4.playSound('media/sounds/arcadeSound', 0.75);
 			}
 			
 			//rotate right
@@ -362,6 +375,7 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 				
 				window.addEventListener('keydown', result.cleanup);
 				
+				Assignment_4.playSound('media/sounds/arcadeSound', 0.75);
 			}
 			
 			//soft drop
@@ -375,6 +389,7 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 				
 				window.addEventListener('keydown', result.cleanup);
 				
+				Assignment_4.playSound('media/sounds/arcadeSound', 0.75);
 			}
 			
 			//hard drop
@@ -388,19 +403,20 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 				
 				window.addEventListener('keydown', result.cleanup);
 				
+				Assignment_4.playSound('media/sounds/arcadeSound', 0.75);
 			}
 			
 			//return 
 			if(that.menu.footer.clicked == true){
 				that.dead = true;
-				
+				Assignment_4.playSound('media/sounds/plopp', 1.0);
 			}
 			
 			return result;
 			
 		};
 		
-		that.render = function(context) {
+		that.render = function (context) {
 			//left
 			if(input.controls.newKeyLeft === undefined){
 				that.menu.items[0].text = controls[0]+": "+input.KeyTranslation[input.controls.prevKeyLeft.toString()];
@@ -497,7 +513,8 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 			
 			if(that.menu.footer.clicked == true){
 				//console.log("display keybindings!");
-				that.dead = true;
+			    that.dead = true;
+			    Assignment_4.playSound('media/sounds/plopp', 1.0);
 				
 			}
 			
@@ -510,8 +527,8 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 			
 		}
 		
-		that.render = function(context) {
-			that.menu.render(context);
+		that.render = function (context) {
+		    that.menu.render(context);
 			
 		};	
 		
@@ -546,6 +563,7 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 	        //return 
 	        if (that.menu.footer.clicked == true) {
 	            that.dead = true;
+	            Assignment_4.playSound('media/sounds/plopp', 1.0);
 
 	        }
 
@@ -589,7 +607,7 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 	        //return 
 	        if (that.menu.footer.clicked == true) {
 	            that.dead = true;
-
+	            Assignment_4.playSound('media/sounds/plopp', 1.0);
 	        }
 
 	        return result;

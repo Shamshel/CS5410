@@ -1,6 +1,7 @@
 //copied from example files in CS5410
 var Assignment_4 = {
-	images : {},
+    images: {},
+    sounds: {},
 	
 	status : {
 			preloadRequest : 0,
@@ -18,7 +19,20 @@ var Assignment_4 = {
 //
 //------------------------------------------------------------------
 window.addEventListener('load', function() {
-	console.log('Loading resources...');
+    console.log('Loading resources...');
+
+    Assignment_4.audioExt = '';
+    //
+    // Find out which kind of audio support we have
+    if (Modernizr.audio.mp3 === 'probably') {
+        console.log('We have MP3 support');
+        Assignment_4.audioExt = 'mp3';
+    }
+    else if (Modernizr.audio.wav === 'probably') {
+        console.log('We have WAV support');
+        Assignment_4.audioExt = 'wav';
+    }
+
 	Modernizr.load([
 		{
 			load : [
@@ -30,6 +44,13 @@ window.addEventListener('load', function() {
 				'preload!media/pinkBlock.png',
 				'preload!media/redBlock.png',
 				'preload!media/yellowBlock.png',
+                'preload!scripts/soundPlayer.js',
+				'preload!media/sounds/arcadeSound.' + Assignment_4.audioExt,
+                'preload!media/sounds/plopp.' + Assignment_4.audioExt,
+				'preload!media/sounds/TetrisSong.' + Assignment_4.audioExt,
+                'preload!media/sounds/SFX_ButtonHover.' + Assignment_4.audioExt,
+                'preload!media/sounds/SFX_PieceMoveLR.' + Assignment_4.audioExt,
+                'preload!media/sounds/SFX_PieceTouchDown.' + Assignment_4.audioExt,
                 'preload!scripts/Menu.js',
 				'preload!scripts/Input.js',
 				'preload!scripts/Frame.js',
@@ -55,11 +76,20 @@ yepnope.addPrefix('preload', function(resource) {
 	Assignment_4.status.preloadRequest += 1;
 	var isImage = /.+\.(jpg|png|gif)$/i.test(resource.url);
 	resource.noexec = isImage;
+	var isSound = /.+\.(mp3|wav)$/i.test(resource.url);
+	resource.noexec = isSound;
+
 	resource.autoCallback = function(e) {
 		if (isImage) {
 			var image = new Image();
 			image.src = resource.url;
 			Assignment_4.images[resource.url] = image;
+		}
+
+		else if (isSound) {
+		    var sound = new Audio(resource.url);
+		    console.log(resource.url);
+		    Assignment_4.sounds[resource.url] = sound;
 		}
 		
 		Assignment_4.status.preloadComplete += 1;

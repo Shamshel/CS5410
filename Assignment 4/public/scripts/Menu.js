@@ -68,7 +68,7 @@ Assignment_4.menu = (function() {
 			context.textAlign = 'center';
 			
 			if(that.selected){
-				context.fillStyle = selectedColor;
+			    context.fillStyle = selectedColor;
 				
 			}
 			
@@ -143,7 +143,7 @@ Assignment_4.menu = (function() {
 			
 		};
 		
-		that.render = function(context){
+		that.render = function (context) {
 
 		   if (borderF === false) {
 		        roundRect(width / 10, 0, width / 1.25, height + 100, 20, 'rgba(0,0,139,0)', 'rgba(0,0,139,0.7)', context);
@@ -152,7 +152,7 @@ Assignment_4.menu = (function() {
 		    that.title.render(context);
 			
 			for(i = 0; i<that.items.length; i++){
-				that.items[i].render(context);
+			    that.items[i].render(context);
 				
 			}
 			

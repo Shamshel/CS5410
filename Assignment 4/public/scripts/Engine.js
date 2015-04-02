@@ -950,6 +950,8 @@ Assignment_4.engine = (function() {
 					moveBlockRight(centerBlock.x, centerBlock.y);
 					centerBlock.x = centerBlock.x+1;
 					cleanGrid();
+
+					Assignment_4.playSound('media/sounds/SFX_PieceMoveLR', 1.0);
 					
 				}
 				
@@ -962,6 +964,7 @@ Assignment_4.engine = (function() {
 					centerBlock.x = centerBlock.x-1;
 					cleanGrid();
 					
+					Assignment_4.playSound('media/sounds/SFX_PieceMoveLR', 1.0);
 				}
 				
 			}
@@ -1001,7 +1004,8 @@ Assignment_4.engine = (function() {
 			}
 			
 			else{
-				centerBlock.dropped = true;
+			    centerBlock.dropped = true;
+			    Assignment_4.playSound('media/sounds/SFX_PieceTouchDown', 1.0);
 				
 			}
 			
