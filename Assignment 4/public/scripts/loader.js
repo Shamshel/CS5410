@@ -44,6 +44,7 @@ window.addEventListener('load', function() {
 				'preload!media/pinkBlock.png',
 				'preload!media/redBlock.png',
 				'preload!media/yellowBlock.png',
+                'preload!media/gridBlock.png',
                 'preload!scripts/soundPlayer.js',
 				'preload!media/sounds/arcadeSound.' + Assignment_4.audioExt,
                 'preload!media/sounds/plopp.' + Assignment_4.audioExt,

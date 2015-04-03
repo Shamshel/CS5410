@@ -207,7 +207,10 @@ Assignment_4.game = (function(engine, menu, frame, input) {
                 nextbX: gameFrame.nextBlock.x,
                 nextbY: gameFrame.nextBlock.y,
                 nextbW: gameFrame.nextBlock.width,
-                nextbH: gameFrame.nextBlock.height
+                nextbH: gameFrame.nextBlock.height,
+                gridImage: {
+                    image: Assignment_4.images['media/gridBlock.png'],
+                }
 			};
         // Register UP
 	    if (input.controls.changeUp == true) {
@@ -338,12 +341,15 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 				for(j = 0; j < that.gameEngine.gridWidth; j++){
 					//console.log("testing at ("+i+", "+j+")");
 					
-					if(that.gameEngine.grid[i][j] != undefined){
-						//console.log("drawing at x: "+gameFrame.border.x+(that.gridPxWidth*j)+" y: "+gameFrame.border.y+(that.gridPxHeight*i));
-						//console.log("image src: "+that.gameEngine.grid[i][j].image);
-						context.drawImage(that.gameEngine.grid[i][j].image, gameFrame.border.x+(that.gridPxWidth*j), gameFrame.border.y+(that.gridPxHeight*i), that.gridPxWidth, that.gridPxHeight);
-						
-					}
+				    if (that.gameEngine.grid[i][j] != undefined) {
+				        //console.log("drawing at x: "+gameFrame.border.x+(that.gridPxWidth*j)+" y: "+gameFrame.border.y+(that.gridPxHeight*i));
+				        //console.log("image src: "+that.gameEngine.grid[i][j].image);
+				        context.drawImage(that.gameEngine.grid[i][j].image, gameFrame.border.x + (that.gridPxWidth * j), gameFrame.border.y + (that.gridPxHeight * i), that.gridPxWidth, that.gridPxHeight);
+
+				    }
+				    else {
+				        context.drawImage(that.gridImage.image, gameFrame.border.x + (that.gridPxWidth * j), gameFrame.border.y + (that.gridPxHeight * i), that.gridPxWidth, that.gridPxHeight);
+				    }
 					
 				}
 				

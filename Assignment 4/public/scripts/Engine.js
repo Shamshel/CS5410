@@ -398,7 +398,7 @@ Assignment_4.engine = (function() {
 		
 	    }
 
-	    result = StraightTet();
+	    //result = StraightTet();
 	    
 	    return result;
 	    
