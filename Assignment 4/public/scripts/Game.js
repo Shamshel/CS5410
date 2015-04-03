@@ -19,6 +19,15 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 	var mouse = input.Mouse();
 	var keyboard = input.Keyboard();
 	var gameFrame = frame.Frame();
+
+	var curHighScores = [],
+           indexHS;
+
+	function getHighScores(data) {
+	    for (indexHS = 0; indexHS < data.length; indexHS++) {
+	        curHighScores[indexHS] = data[indexHS].score;
+	    }
+	}
 	
 	function Game() {
 		var timestamp = 0,
@@ -73,6 +82,9 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 			//the main menu should be the base state
 			gameFrame.initialize(context);
 			gameStack[gameStack.length] = MainMenuState(gameFrame);
+
+            //Request High Scores
+			Assignment_4.getScore(getHighScores);
 			
 			requestAnimationFrame(that.gameLoop);
 
@@ -601,18 +613,7 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 
 	function DisplayHighScoresMenuState(gameFrame) {
 
-	    var curHighScores = [],
-            indexHS;
-
-	    function getHighScores(data) {
-	        for (indexHS = 0; indexHS < data.length; indexHS++) {
-	            curHighScores[indexHS] = data[indexHS].score;
-	        }
-	    }
-
-	    Assignment_4.getScore(getHighScores);
-
-	    var highScoreList = ['1st: ', '2nd: ', '3rd: ', '4th: ', '5th: ', '6th: '];
+	    var highScoreList = ['1st: ' + curHighScores[0], '2nd: ' + curHighScores[1], '3rd: ' + curHighScores[2], '4th: ' + curHighScores[3], '5th: ' + curHighScores[4], '6th: ' + curHighScores[5], '7th: ' + curHighScores[6], '8th: ' + curHighScores[7], '9th: ' + curHighScores[8], '10th: ' + curHighScores[9]];
 
 	    var that = {
 	        menu: menu.Menu('High Scores', highScoreList, 'return', 100, gameFrame.width, gameFrame.height - 100, false),
@@ -655,7 +656,7 @@ Assignment_4.game = (function(engine, menu, frame, input) {
     //--------------------------------------------------------------
 
 	function DisplayCreditsMenuState(gameFrame) {
-	    var credNames = ['Cody Herndon', 'Justin Cox', 'For CS 5410'];
+	    var credNames = ['Cody Herndon','&', 'Justin Cox', 'For CS 5410'];
 
 	    var that = {
 	        menu: menu.Menu('Created By:', credNames, 'return', 100, gameFrame.width, gameFrame.height - 100, false),
