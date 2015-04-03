@@ -51,6 +51,7 @@ window.addEventListener('load', function() {
                 'preload!media/sounds/SFX_ButtonHover.' + Assignment_4.audioExt,
                 'preload!media/sounds/SFX_PieceMoveLR.' + Assignment_4.audioExt,
                 'preload!media/sounds/SFX_PieceTouchDown.' + Assignment_4.audioExt,
+                'preload!scripts/inputHighScores.js',
                 'preload!scripts/Menu.js',
 				'preload!scripts/Input.js',
 				'preload!scripts/Frame.js',

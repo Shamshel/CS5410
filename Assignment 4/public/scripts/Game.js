@@ -177,8 +177,21 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 	    var that = {
 				gameEngine: engine.GameEngine(),
 				gridPxHeight: 0,
-				gridPxWidth: 0
-			
+				gridPxWidth: 0,
+				gameSec: 0,
+                gameMin: 0,
+				secCount: 0,
+                minCount: 0,
+				curScore: 0,
+				lines: 0,
+				infoX: gameFrame.info.x,
+				infoY: gameFrame.info.y,
+                infoW: gameFrame.info.width,
+                infoH: gameFrame.info.height,
+                nextbX: gameFrame.nextBlock.x,
+                nextbY: gameFrame.nextBlock.y,
+                nextbW: gameFrame.nextBlock.width,
+                nextbH: gameFrame.nextBlock.height
 			};
 
 		if(input.newKeyUp == undefined){
@@ -255,7 +268,22 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 	    that.update = function (elapsedTime) {
             
 	        that.gameEngine.update(elapsedTime);
-		
+            
+	        //Update Game Time
+	        that.secCount += (elapsedTime / 1000);
+	        if (that.secCount >= 1) {
+	            that.gameSec++;
+	            that.secCount = 0;
+	            if (that.gameSec > 59) {
+	                that.gameMin++;
+	                that.gameSec = 0;
+	            }
+	        }
+
+	        //TO DO: Update Current Score
+
+	        //TO DO: Update # of Lines
+
 	    }
 
 	    that.render = function (context) {
@@ -276,7 +304,35 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 				}
 				
 			}
-			
+
+	        //Render Next Block
+			if (that.gameEngine.nextBlock != undefined) {
+			    for (i = 0; i < 2; i++) {
+			        for (j = 0; j < 4; j++) {
+			            if (that.gameEngine.nextBlock.grid[i][j] != undefined) {
+			                context.drawImage(that.gameEngine.nextBlock.grid[i][j].image, (that.nextbX + (that.nextbW / 3) + (that.gridPxWidth * j)), (that.nextbY + (that.nextbH / 3) + (that.gridPxHeight * i)), that.gridPxWidth, that.gridPxHeight);
+			            }
+			        }
+			    }
+			}
+		    
+	        //Render Time
+			context.font = '28px Arial';
+			context.textAlign = 'center';
+			context.fillStyle = 'lightblue';
+			if (that.gameSec < 10) {
+			    context.fillText(that.gameMin + ':0' + that.gameSec, (that.infoX + (that.infoW / 2)), (that.infoY + (that.infoH / 10)) + (that.infoH / 20) + ((that.infoH * (15 / 100)) / 1.5));
+			}
+			else {
+			    context.fillText(that.gameMin + ':' + that.gameSec, (that.infoX + (that.infoW / 2)), (that.infoY + (that.infoH / 10)) + (that.infoH / 20) + ((that.infoH * (15 / 100)) / 1.5));
+			}
+
+	        //Render Current Score
+			context.fillText(that.curScore, (that.infoX + (that.infoW / 2)), (that.infoY + (that.infoH / 2.5)) + (that.infoH / 20) + ((that.infoH * (15 / 100)) / 1.5));
+
+	        //Render # of Lines
+			context.fillText(that.lines, (that.infoX + (that.infoW / 2)), (that.infoY + (2 * (that.infoH / 2.5))) - (that.infoH / 10) + (that.infoH / 20) + ((that.infoH * (15 / 100)) / 1.5));
+
 			context.restore();
 		
 	    }
@@ -544,12 +600,23 @@ Assignment_4.game = (function(engine, menu, frame, input) {
     //--------------------------------------------------------------
 
 	function DisplayHighScoresMenuState(gameFrame) {
-	    var highScoreNumbers = ['1st:', '2nd:', '3rd:', '4th:', '5th:', '6th:'];
+
+	    var curHighScores = [],
+            indexHS;
+
+	    function getHighScores(data) {
+	        for (indexHS = 0; indexHS < data.length; indexHS++) {
+	            curHighScores[indexHS] = data[indexHS].score;
+	        }
+	    }
+
+	    Assignment_4.getScore(getHighScores);
+
+	    var highScoreList = ['1st: ', '2nd: ', '3rd: ', '4th: ', '5th: ', '6th: '];
 
 	    var that = {
-	        menu: menu.Menu('High Scores', highScoreNumbers, 'return', 100, gameFrame.width, gameFrame.height - 100, false),
+	        menu: menu.Menu('High Scores', highScoreList, 'return', 100, gameFrame.width, gameFrame.height - 100, false),
 	        dead: false
-
 	    };
 
 	    that.update = function (elapsedTime) {

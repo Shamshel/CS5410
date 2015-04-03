@@ -897,14 +897,21 @@ Assignment_4.engine = (function() {
 				var i;
 				var j;
 				
-				if(blockStack.length < 1){
-					blockStack.push(spawnBlock());
-					blockStack.push(spawnBlock());
-					
+				if(blockStack.length == 0){
+				    blockStack.push(spawnBlock());
+				    blockStack.push(spawnBlock());
 				}
 				
 				newBlock = blockStack.pop();
-				
+
+				if (blockStack.length < 1) {
+				    blockStack.push(spawnBlock());
+				    blockStack.push(spawnBlock());
+				}
+
+                //Assign Next Block for Display Purposes
+				that.nextBlock = blockStack[blockStack.length - 1];
+
 				//center block at top of grid
 				centerBlock.x = 4;
 				centerBlock.y = 1;	

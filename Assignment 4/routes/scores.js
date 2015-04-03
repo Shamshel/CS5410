@@ -21,7 +21,10 @@ fs.readFile(fileName, function (err, data) {
     text = data.toString();
     //console.log(text);
 
-    //scores = JSON.parse(text);
+    scores = JSON.parse(text);
+
+    //console.log('Id: ' + scores[0].id);
+    //console.log('Scores: ' + scores[0].score);
 
 });
 

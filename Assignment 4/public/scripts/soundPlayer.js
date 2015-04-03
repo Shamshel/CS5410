@@ -1,5 +1,4 @@
-//Make this function global
-
+//Function used to play music anywhere in the Assignment_4 global space
 
 Assignment_4.playSound = function (whichSound,vol) {
     var property = whichSound + '.' + Assignment_4.audioExt;
