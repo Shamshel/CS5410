@@ -209,65 +209,78 @@ Assignment_4.game = (function(engine, menu, frame, input) {
                 nextbW: gameFrame.nextBlock.width,
                 nextbH: gameFrame.nextBlock.height
 			};
+        // Register UP
+	    if (input.controls.changeUp == true) {
 
-		if(input.newKeyUp == undefined){
-			keyboard.registerCommand(input.controls.prevKeyUp, that.gameEngine.hardDrop);
-			
+	        keyboard.unRegisterCommand(input.controls.prevKeyUp, that.gameEngine.hardDrop);
+	        keyboard.registerCommand(input.controls.newKeyUp, that.gameEngine.hardDrop);
+	        input.controls.changeUp == false;
+	    }
+
+	    else {
+	        keyboard.registerCommand(input.controls.prevKeyUp, that.gameEngine.hardDrop);
+
+	    }
+	    // Register DOWN
+	    if (input.controls.changeDown == true) {
+
+	        keyboard.unRegisterCommand(input.controls.prevKeyDown, that.gameEngine.softDrop);
+	        keyboard.registerCommand(input.controls.newKeyDown, that.gameEngine.softDrop);
+	        input.controls.changeDown == false;
+	    }
+
+	    else {
+	        keyboard.registerCommand(input.controls.prevKeyDown, that.gameEngine.softDrop);
+
+	    }
+	    // Register LEFT
+	    if (input.controls.changeLeft == true) {
+
+	        keyboard.unRegisterCommand(input.controls.prevKeyLeft, that.gameEngine.moveLeft);
+	        keyboard.registerCommand(input.controls.newKeyLeft, that.gameEngine.moveLeft);
+	        input.controls.changeLeft == false;
+	    }
+
+	    else {
+	        keyboard.registerCommand(input.controls.prevKeyLeft, that.gameEngine.moveLeft);
+
+	    }
+	    // Register RIGHT
+		if(input.controls.changeRight == true){
+
+		    keyboard.unRegisterCommand(input.controls.prevKeyRight, that.gameEngine.moveRight);
+		    keyboard.registerCommand(input.controls.newKeyRight, that.gameEngine.moveRight);
+		    input.controls.changeRight == false;
 		}
 		
 		else{
-			keyboard.registerCommand(input.controls.newKeyUp, that.gameEngine.hardDrop);
-		
-		}
-		
-		if(input.newKeyDown == undefined){
-			keyboard.registerCommand(input.controls.prevKeyDown, that.gameEngine.softDrop);
-			
-		}
-		
-		else{
-			keyboard.registerCommand(input.controls.newKeyDown, that.gameEngine.softDrop);
-		
-		}
-		
-		if(input.newKeyLeft == undefined){
-			keyboard.registerCommand(input.controls.prevKeyLeft, that.gameEngine.moveLeft);
-			
-		}
-		
-		else{
-			keyboard.registerCommand(input.controls.newKeyLeft, that.gameEngine.moveLeft);
-		
-		}
-		
-		if(input.newKeyRight == undefined){
 			keyboard.registerCommand(input.controls.prevKeyRight, that.gameEngine.moveRight);
-			
-		}
-		
-		else{
-			keyboard.registerCommand(input.controls.newKeyRight, that.gameEngine.moveRight);
 		
 		}
-		
-		if(input.newKeyRotateLeft == undefined){
-			keyboard.registerCommand(input.controls.prevKeyRotateLeft, that.gameEngine.rotateLeft);
-			
-		}
-		
-		else{
+	    // Register RotateLeft
+		if (input.controls.changeRotateLeft == true) {
+
+			keyboard.unRegisterCommand(input.controls.prevKeyRotateLeft, that.gameEngine.rotateLeft);
 			keyboard.registerCommand(input.controls.newKeyRotateLeft, that.gameEngine.rotateLeft);
-		
-		}
-		
-		if(input.newKeyRotateRight == undefined){
-			keyboard.registerCommand(input.controls.prevKeyRotateRight, that.gameEngine.rotateRight);
-			
+			input.controls.changeRotateLeft == false;
 		}
 		
 		else{
-			keyboard.registerCommand(input.controls.newKeyRotateRight, that.gameEngine.rotateRight);
+		    keyboard.registerCommand(input.controls.prevKeyRotateLeft, that.gameEngine.rotateLeft);
 		
+		}
+		
+	    // Register RotateRight
+		if (input.controls.changeRotateRight == true) {
+
+		    keyboard.unRegisterCommand(input.controls.prevKeyRotateRight, that.gameEngine.rotateRight);
+		    keyboard.registerCommand(input.controls.newKeyRotateRight, that.gameEngine.rotateRight);
+		    input.controls.changeRotateRight == false;
+		}
+
+		else {
+		    keyboard.registerCommand(input.controls.prevKeyRotateRight, that.gameEngine.rotateRight);
+
 		}
 			
 		var i,
