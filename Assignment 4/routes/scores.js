@@ -9,6 +9,7 @@ var scores = [],
 	text = undefined,
 	fileName = 'highScores.txt';
 
+
 //------------------------------------------------------------------
 //
 // Read file and get high scores
@@ -28,7 +29,6 @@ fs.readFile(fileName, function (err, data) {
 
 });
 
-
 //------------------------------------------------------------------
 //
 // Report all scores back to the requester.
@@ -46,18 +46,21 @@ exports.all = function (request, response) {
 //
 //------------------------------------------------------------------
 exports.add = function (request, response) {
-    console.log('add new score called');
-    console.log('Name: ' + request.query.name);
+    console.log('add new score');
+   //console.log('Name: ' + request.query.name);
     console.log('Score: ' + request.query.score);
 
-    var now = new Date();
-    scores.push({
-        id: (scores[scores.length - 1].id) + 1,
-        name: request.query.name,
-        score: request.query.score,
-        date: now.toLocaleDateString(),
-        time: now.toLocaleTimeString()
-    });
+    var currentScore = request.query.score,
+        tempHS = 0,
+        i;
+
+    for (i = 0; i < scores.length; i++) {
+        if (currentScore >= scores[i].score) {
+            tempHS = scores[i].score;
+            scores[i].score = currentScore;
+            currentScore = tempHS;
+        }
+    }
 
     //------------------------------------------------------------------
     //

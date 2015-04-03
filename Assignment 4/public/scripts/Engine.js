@@ -312,7 +312,7 @@ Assignment_4.engine = (function() {
 	    grid: [],
 	    gameOver: false,
 	    level: 1,
-	    score: 0,
+	    scoreSum: 0,
 	    nextBlock: undefined,
 	    gridWidth: 10,
 	    gridHeight: 22,
@@ -1172,8 +1172,11 @@ Assignment_4.engine = (function() {
 
 			}
 
-			that.clearedRow = that.clearedRow+1;
+			that.clearedRows = that.clearedRows+1;
+			that.scoreSum += 100;
 
+			Assignment_4.playSound('media/sounds/LineFilled', 1.0);
+			
 			//move down all above
 			for(l = 0; l < that.gridWidth; l++){
 			    if(that.grid[i-1][l] != undefined){
@@ -1228,14 +1231,21 @@ Assignment_4.engine = (function() {
 		    }
 
 		}
-
-		if(blockStack.length < 1){
-		    blockStack.push(spawnBlock());
-		    blockStack.push(spawnBlock());
-		    
-		}
 		
+		if(blockStack.length == 0){
+			blockStack.push(spawnBlock());
+			blockStack.push(spawnBlock());
+		}
+				
 		newBlock = blockStack.pop();
+
+		if (blockStack.length < 1) {
+			blockStack.push(spawnBlock());
+			blockStack.push(spawnBlock());
+		}
+
+        //Assign Next Block for Display Purposes
+		that.nextBlock = blockStack[blockStack.length - 1];
 		
 		//center block at top of grid
 		centerBlock.x = 4;
@@ -1270,12 +1280,16 @@ Assignment_4.engine = (function() {
 		rotateBlockRight(centerBlock.x, centerBlock.y);
 		cleanGrid();
 		
+		Assignment_4.playSound('media/sounds/SFX_PieceRotateLR', 1.0);
+		
 	    }
 	    
 	    else if(rotLeft == true && rotRight == false){
 		cleanGrid();
 		rotateBlockLeft(centerBlock.x, centerBlock.y);
 		cleanGrid();		
+		
+		Assignment_4.playSound('media/sounds/SFX_PieceRotateLR', 1.0);
 		
 	    }
 	    
@@ -1337,7 +1351,7 @@ Assignment_4.engine = (function() {
 		    
 		    else{
 			centerBlock.dropped = true;
-			Assignment_4.playSound('media/sounds/SFX_PieceTouchDown', 1.0);
+			Assignment_4.playSound('media/sounds/SFX_PieceHardDrop', 1.0);
 			
 		    }
 

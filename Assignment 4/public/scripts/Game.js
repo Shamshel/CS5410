@@ -20,8 +20,9 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 	var keyboard = input.Keyboard();
 	var gameFrame = frame.Frame();
 
-	var curHighScores = [],
-           indexHS;
+    var curHighScores = [],
+        gameOver = false,
+        indexHS;
 
 	function getHighScores(data) {
 	    for (indexHS = 0; indexHS < data.length; indexHS++) {
@@ -45,8 +46,11 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 
 		that.update = function(elapsedTime) {
 			if(gameStack[gameStack.length-1].dead){
-				gameStack.pop();
-				
+				gameStack.pop();	
+			}
+			else if (gameStack[gameStack.length - 1].gameOverDead) {
+			    gameStack.pop();
+			    gameStack.pop();
 			}
 			
 			var result = gameStack[gameStack.length-1].update(elapsedTime);
@@ -279,6 +283,8 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 
 	    that.update = function (elapsedTime) {
             
+	        var result = undefined;
+
 	        that.gameEngine.update(elapsedTime);
             
 	        //Update Game Time
@@ -292,9 +298,22 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 	            }
 	        }
 
-	        //TO DO: Update Current Score
+	        //FOR DEBUGGING HIGH SCORES ONLY
+	        if (that.gameMin > 0) {
+	            gameOver = true;
+	            gameFrame.renderBorder = false;
+	            result = DisplayGameOver(gameFrame, that.curScore);
+	            Assignment_4.addScore(that.curScore);
+	            Assignment_4.stopSound('media/sounds/TetrisSong');
+	            Assignment_4.playSound('media/sounds/SFX_GameOver',1.0);
+	        }
 
+	        //TO DO: Update Current Score
+	        that.curScore = that.gameEngine.scoreSum;
 	        //TO DO: Update # of Lines
+			that.lines = that.gameEngine.clearedRows;
+			
+	        return result;
 
 	    }
 
@@ -350,6 +369,51 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 	    }
 
 	    return that;
+	}
+
+    //--------------------------------------------------------------
+    //          Display Game Over State
+    //
+    //              --> Sub Menu of: 'DisplayGamePlayMenuState'
+    //--------------------------------------------------------------
+
+	function DisplayGameOver(gameFrame, curScore) {
+	    var gameOverScore = ['','Current Score: ' + curScore, '',''];
+
+	    var that = {
+	        menu: menu.Menu('Game Over', gameOverScore, 'return', 100, gameFrame.width, gameFrame.height - 100, false),
+	        gameOverDead: false
+
+	    };
+
+	    that.update = function (elapsedTime) {
+	        mouse = input.Mouse();
+
+	        mouse.registerCommand('mousemove', that.menu.footer.mouseOver);
+	        mouse.registerCommand('mousedown', that.menu.footer.click);
+
+	        var result = undefined;
+
+	        //return 
+	        if (that.menu.footer.clicked == true) {
+	            that.gameOverDead = true;
+
+	            Assignment_4.getScore(getHighScores);
+	            Assignment_4.playSound('media/sounds/plopp', 1.0);
+	        }
+
+	        return result;
+
+	    };
+
+	    that.render = function (context) {
+
+	        that.menu.render(context);
+
+	    };
+
+	    return that;
+
 	}
 
     //--------------------------------------------------------------
@@ -656,7 +720,7 @@ Assignment_4.game = (function(engine, menu, frame, input) {
     //--------------------------------------------------------------
 
 	function DisplayCreditsMenuState(gameFrame) {
-	    var credNames = ['Cody Herndon','&', 'Justin Cox', 'For CS 5410'];
+	    var credNames = ['','Cody Herndon','&', 'Justin Cox','', 'For CS 5410'];
 
 	    var that = {
 	        menu: menu.Menu('Created By:', credNames, 'return', 100, gameFrame.width, gameFrame.height - 100, false),
