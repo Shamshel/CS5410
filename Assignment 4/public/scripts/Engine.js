@@ -398,7 +398,7 @@ Assignment_4.engine = (function() {
 		
 	    }
 
-	    //result = StraightTet();
+	    //result = InvSkewTet();
 	    
 	    return result;
 	    
@@ -773,7 +773,7 @@ Assignment_4.engine = (function() {
 	}
 	
 	function rotateBlockLeft(x, y) {
-	    console.log("rotating ["+y+", "+x+"] left");
+	    //console.log("rotating ["+y+", "+x+"] left");
  
 	    var startX = x;
 	    var startY = y;
@@ -796,10 +796,10 @@ Assignment_4.engine = (function() {
 
 	    var i;
 
-	    for(i = 0; i < completeBlockStack.length; i++){
-		//console.log("point "+i+": ["+completeBlockStack[i].y+", "+completeBlockStack[i].x+"]");
-
-	    }
+/*	    for(i = 0; i < completeBlockStack.length; i++){
+		console.log("point "+i+": ["+completeBlockStack[i].y+", "+completeBlockStack[i].x+"]");
+		
+	    }*/
 
 	    cleanGrid();
 
@@ -808,7 +808,9 @@ Assignment_4.engine = (function() {
 		point = completeBlockStack.pop();
 
 		deltaX = startX - point.x;
-		deltaY = startY - point.y;
+		deltaY = point.y - startY;
+
+		//console.log("moving ["+deltaY+", "+deltaX+"]");
 
 		//check grid boundries
 		if(startY+deltaX >= that.gridHeight || startY+deltaX < 0 || startX+deltaY >= that.gridWidth || startX+deltaY < 0){
@@ -819,6 +821,7 @@ Assignment_4.engine = (function() {
 
 		//grid point occupied
 		else if(point.x != startX+deltaY && point.y != startY+deltaX && that.grid[startY+deltaX][startX+deltaY] != undefined){
+		    //console.log("grid point occupied!");
 		    collision = true;
 
 		    //check if point is in the array
@@ -842,49 +845,75 @@ Assignment_4.engine = (function() {
 		else{
 		    //console.log("moving ["+point.y+", "+point.x+"] to ["+(startY+deltaX)+", "+(startX+deltaY)+"]");
 
-		    that.grid[startY+deltaX][startX+deltaY] = that.grid[point.y][point.x];
-
 		    binding = that.grid[point.y][point.x].bind;
-/*
-		    console.log("bindings:");
+
+/*		    console.log("bindings:");
 		    console.log("left: "+binding.left);
 		    console.log("right: "+binding.right);
 		    console.log("up: "+binding.up);
 		    console.log("down: "+binding.down);
-		    console.log();
 */
-		    that.grid[startY+deltaX][startX+deltaY].bind = {
-			left: true,
-			right: true,
-			up: true,
-			down: true
+		    //spawn new block
+		    //!@#$! javascript object copy is not deep.
+		    if(that.grid[point.y][point.x].image == Assignment_4.images['media/blueBlock.png']){
+			that.grid[startY+deltaX][startX+deltaY] = BlueBlock();
 
-		    };
+		    }
+
+		    if(that.grid[point.y][point.x].image == Assignment_4.images['media/greenBlock.png']){
+			that.grid[startY+deltaX][startX+deltaY] = GreenBlock();
+
+		    }
+
+		    if(that.grid[point.y][point.x].image == Assignment_4.images['media/lightBlueBlock.png']){
+			that.grid[startY+deltaX][startX+deltaY] = LightBlueBlock();
+
+		    }
+
+		    if(that.grid[point.y][point.x].image == Assignment_4.images['media/orangeBlock.png']){
+			that.grid[startY+deltaX][startX+deltaY] = OrangeBlock();
+
+		    }
+
+		    if(that.grid[point.y][point.x].image == Assignment_4.images['media/pinkBlock.png']){
+			that.grid[startY+deltaX][startX+deltaY] = PinkBlock();
+
+		    }
+
+		    if(that.grid[point.y][point.x].image == Assignment_4.images['media/redBlock.png']){
+			that.grid[startY+deltaX][startX+deltaY] = RedBlock();
+
+		    }
+
+		    if(that.grid[point.y][point.x].image == Assignment_4.images['media/yellowBlock.png']){
+			that.grid[startY+deltaX][startX+deltaY] = YellowBlock();
+
+		    }
 
 		    that.grid[startY+deltaX][startX+deltaY].bind.left = binding.up;
-		    that.grid[startY+deltaX][startX+deltaY].bind.down = binding.left;
 		    that.grid[startY+deltaX][startX+deltaY].bind.right = binding.down;
 		    that.grid[startY+deltaX][startX+deltaY].bind.up = binding.right;
-/*
-		    console.log("bindings:");
+		    that.grid[startY+deltaX][startX+deltaY].bind.down = binding.left;
+
+//		    console.log("moving ["+deltaY+", "+deltaX+"] to ["+deltaX+", "+deltaY+"]");
+
+/*		    console.log("bindings:");
 		    console.log("left: "+that.grid[startY+deltaX][startX+deltaY].bind.left);
 		    console.log("right: "+that.grid[startY+deltaX][startX+deltaY].bind.right);
 		    console.log("up: "+that.grid[startY+deltaX][startX+deltaY].bind.up);
 		    console.log("down: "+that.grid[startY+deltaX][startX+deltaY].bind.down);
-		    console.log();
 */
-		    binding = that.grid[point.y][point.x].bind;
-
-		    if((startY+deltaX) != point.y && (startX+deltaY)+point.x){
+		    if(deltaX != 0 || deltaY != 0){
+//			console.log("clearing ["+point.y+", "+point.x+"]");
 			that.grid[point.y][point.x] = undefined;
 
 		    }
 
+		    //console.log();
+
 		}
 		
 	    }
-
-	    console.log("left rotation complete.");
 
 	}
 
@@ -914,7 +943,7 @@ Assignment_4.engine = (function() {
 
 	    for(i = 0; i < completeBlockStack.length; i++){
 		//console.log("point "+i+": ["+completeBlockStack[i].y+", "+completeBlockStack[i].x+"]");
-
+		
 	    }
 
 	    cleanGrid();
@@ -923,25 +952,28 @@ Assignment_4.engine = (function() {
 		//console.log("stack length: "+completeBlockStack.length);
 		point = completeBlockStack.pop();
 
-		deltaX = startX - point.x;
+		deltaX = point.x - startX;
 		deltaY = startY - point.y;
 
+		//console.log("moving ["+deltaY+", "+deltaX+"]");
+
 		//check grid boundries
-		if(startY-deltaX >= that.gridHeight || startY-deltaX < 0 || startX-deltaY >= that.gridWidth || startX-deltaY < 0){
+		if(startY+deltaX >= that.gridHeight || startY+deltaX < 0 || startX+deltaY >= that.gridWidth || startX+deltaY < 0){
 		    //console.log("edge collision occured!");
 		    collision = true;
 
 		}
 
 		//grid point occupied
-		else if(point.x != startX-deltaY && point.y != startY-deltaX && that.grid[startY-deltaX][startX-deltaY] != undefined){
+		else if(point.x != startX+deltaY && point.y != startY+deltaX && that.grid[startY+deltaX][startX+deltaY] != undefined){
+		    //console.log("grid point occupied!");
 		    collision = true;
 
 		    //check if point is in the array
 		    var i;
 		    for(i = 0; i < completeBlockStack.length; i++){
-			if(startX-deltaY == completeBlockStack[i].x && startY-deltaX == completeBlockStack[i].y){
-			    //console.log("move from ["+point.y+", "+point.x+"] to ["+(startY-deltaX)+", "+(startX-deltaY)+"] delayed");
+			if(startX+deltaY == completeBlockStack[i].x && startY+deltaX == completeBlockStack[i].y){
+			    //console.log("move from ["+point.y+", "+point.x+"] to ["+(startY+deltaX)+", "+(startX+deltaY)+"] delayed");
 			    //move the other blocks first
 			    //completeBlockStack.push(point);
 			    completeBlockStack.unshift(point);
@@ -956,51 +988,79 @@ Assignment_4.engine = (function() {
 
 		//grid point unoccupied and within bounds
 		else{
-		    //console.log("moving ["+point.y+", "+point.x+"] to ["+(startY-deltaX)+", "+(startX-deltaY)+"]");
-
-		    that.grid[startY-deltaX][startX-deltaY] = that.grid[point.y][point.x];
+		    //console.log("moving ["+point.y+", "+point.x+"] to ["+(startY+deltaX)+", "+(startX+deltaY)+"]");
 
 		    binding = that.grid[point.y][point.x].bind;
-/*
-		    console.log("bindings:");
+
+/*		    console.log("bindings:");
 		    console.log("left: "+binding.left);
 		    console.log("right: "+binding.right);
 		    console.log("up: "+binding.up);
 		    console.log("down: "+binding.down);
-		    console.log();
 */
-		    that.grid[startY-deltaX][startX-deltaY].bind = {
-			left: true,
-			right: true,
-			up: true,
-			down: true
+		    //spawn new block
+		    //!@#$! javascript object copy is not deep.
+		    if(that.grid[point.y][point.x].image == Assignment_4.images['media/blueBlock.png']){
+			that.grid[startY+deltaX][startX+deltaY] = BlueBlock();
 
-		    };
+		    }
 
-		    that.grid[startY-deltaX][startX-deltaY].bind.left = binding.down;
-		    that.grid[startY-deltaX][startX-deltaY].bind.down = binding.right;
-		    that.grid[startY-deltaX][startX-deltaY].bind.right = binding.up;
-		    that.grid[startY-deltaX][startX-deltaY].bind.up = binding.left;
-/*
-		    console.log("bindings:");
-		    console.log("left: "+that.grid[startY-deltaX][startX-deltaY].bind.left);
-		    console.log("right: "+that.grid[startY-deltaX][startX-deltaY].bind.right);
-		    console.log("up: "+that.grid[startY-deltaX][startX-deltaY].bind.up);
-		    console.log("down: "+that.grid[startY-deltaX][startX-deltaY].bind.down);
-		    console.log();
+		    if(that.grid[point.y][point.x].image == Assignment_4.images['media/greenBlock.png']){
+			that.grid[startY+deltaX][startX+deltaY] = GreenBlock();
+
+		    }
+
+		    if(that.grid[point.y][point.x].image == Assignment_4.images['media/lightBlueBlock.png']){
+			that.grid[startY+deltaX][startX+deltaY] = LightBlueBlock();
+
+		    }
+
+		    if(that.grid[point.y][point.x].image == Assignment_4.images['media/orangeBlock.png']){
+			that.grid[startY+deltaX][startX+deltaY] = OrangeBlock();
+
+		    }
+
+		    if(that.grid[point.y][point.x].image == Assignment_4.images['media/pinkBlock.png']){
+			that.grid[startY+deltaX][startX+deltaY] = PinkBlock();
+
+		    }
+
+		    if(that.grid[point.y][point.x].image == Assignment_4.images['media/redBlock.png']){
+			that.grid[startY+deltaX][startX+deltaY] = RedBlock();
+
+		    }
+
+		    if(that.grid[point.y][point.x].image == Assignment_4.images['media/yellowBlock.png']){
+			that.grid[startY+deltaX][startX+deltaY] = YellowBlock();
+
+		    }
+
+		    that.grid[startY+deltaX][startX+deltaY].bind.right = binding.up;
+		    that.grid[startY+deltaX][startX+deltaY].bind.left = binding.down;
+		    that.grid[startY+deltaX][startX+deltaY].bind.down = binding.right;
+		    that.grid[startY+deltaX][startX+deltaY].bind.up = binding.left;
+
+		    //console.log("moving ["+deltaY+", "+deltaX+"] to ["+deltaX+", "+deltaY+"]");
+
+		    /*console.log("bindings:");
+		    console.log("left: "+that.grid[startY+deltaX][startX+deltaY].bind.left);
+		    console.log("right: "+that.grid[startY+deltaX][startX+deltaY].bind.right);
+		    console.log("up: "+that.grid[startY+deltaX][startX+deltaY].bind.up);
+		    console.log("down: "+that.grid[startY+deltaX][startX+deltaY].bind.down);
 */
-		    binding = that.grid[point.y][point.x].bind;
-
-		    if((startY-deltaX) != point.y && (startX+deltaY)+point.x){
+		    if(deltaX != 0 || deltaY != 0){
+			//console.log("clearing ["+point.y+", "+point.x+"]");
 			that.grid[point.y][point.x] = undefined;
 
 		    }
+		    
+		    //console.log();
 
 		}
 		
 	    }
 
-	    console.log("right rotation complete.");
+	    //console.log("right rotation complete.");
 
 	}
 	
@@ -1128,8 +1188,6 @@ Assignment_4.engine = (function() {
 		
 	    }
 	    
-	    accumulatedTime = 0;
-	    
 	    //console.log("passed time interval!");
 	    
 	    //check if block has dropped and copy in a new one
@@ -1142,6 +1200,167 @@ Assignment_4.engine = (function() {
 
 		var filled;
 		
+		if(blockStack.length == 0){
+			blockStack.push(spawnBlock());
+			blockStack.push(spawnBlock());
+		}
+				
+		newBlock = blockStack.pop();
+
+		if (blockStack.length < 1) {
+			blockStack.push(spawnBlock());
+			blockStack.push(spawnBlock());
+		}
+
+		//Assign Next Block for Display Purposes
+		that.nextBlock = blockStack[blockStack.length - 1];
+
+		//center block at top of grid
+		centerBlock.x = 4;
+		centerBlock.y = 1;
+
+		//check if centerd block is overlapped by old block (game over)
+		if(that.grid[centerBlock.y][centerBlock.x] != undefined){
+		    that.gameOver = true;
+		    return;
+
+		}
+		
+		//copy block into grid
+		for(i = 0; i < 2; i++){
+		    for(j = 3; j < 7; j++){
+			if(newBlock.grid[i][j-3] != undefined){
+			    //console.log("copying y:"+i+" x:"+j);
+			    that.grid[i][j] = newBlock.grid[i][j-3];
+			    
+			    
+			}
+			
+		    }
+		    
+		}
+		
+		centerBlock.dropped = false;
+		
+	    }
+	    
+	    if(blockStack.length < 1){
+		blockStack.push(spawnBlock());
+		
+	    }
+	    
+	    //rotate
+	    if(rotRight == true && rotLeft == false){
+		cleanGrid();
+		rotateBlockRight(centerBlock.x, centerBlock.y);
+		cleanGrid();
+		
+		//Assignment_4.playSound('media/sounds/SFX_PieceRotateLR', 1.0);
+		
+	    }
+	    
+	    else if(rotLeft == true && rotRight == false){
+		cleanGrid();
+		rotateBlockLeft(centerBlock.x, centerBlock.y);
+		cleanGrid();		
+		
+		//Assignment_4.playSound('media/sounds/SFX_PieceRotateLR', 1.0);
+		
+	    }
+	    
+	    //move
+	    if(movRight == true && movLeft == false){
+		if(detectRightMostEdgeCollision(centerBlock.x, centerBlock.y) == false){
+		    cleanGrid();
+		    moveBlockRight(centerBlock.x, centerBlock.y);
+		    centerBlock.x = centerBlock.x+1;
+		    cleanGrid();
+
+		    //Assignment_4.playSound('media/sounds/SFX_PieceMoveLR', 1.0);
+		    
+		}
+		
+	    }
+	    
+	    else if(movLeft == true && movRight == false){
+		if(detectLeftMostEdgeCollision(centerBlock.x, centerBlock.y) == false){
+		    cleanGrid();
+		    moveBlockLeft(centerBlock.x, centerBlock.y);
+		    centerBlock.x = centerBlock.x-1;
+		    cleanGrid();
+		    
+		    //Assignment_4.playSound('media/sounds/SFX_PieceMoveLR', 1.0);
+		}
+		
+	    }
+	    
+	    //drop
+	    if(softDrp == true && hardDrp == false){
+		if(detectLowestEdgeCollision(centerBlock.x, centerBlock.y) == false){
+		    cleanGrid();
+		    dropBlock(centerBlock.x, centerBlock.y);
+		    centerBlock.y = centerBlock.y+1;
+		    cleanGrid();
+		    
+		}
+
+		else{
+		    centerBlock.dropped = true;
+		    //Assignment_4.playSound('media/sounds/SFX_PieceTouchDown', 1.0);
+		
+		}
+		
+	    }
+
+	    
+	    
+	    else if(hardDrp == true && softDrp == false){
+		while(centerBlock.dropped == false){
+		    if(detectLowestEdgeCollision(centerBlock.x, centerBlock.y) == false){
+			cleanGrid();
+			dropBlock(centerBlock.x, centerBlock.y);
+			centerBlock.y = centerBlock.y+1;
+			cleanGrid();
+			
+		    }
+		    
+		    else{
+			centerBlock.dropped = true;
+			//Assignment_4.playSound('media/sounds/SFX_PieceHardDrop', 1.0);
+			
+		    }
+
+		}
+		
+	    }
+	    
+	    //reset user inputs
+	    rotRight = false;
+	    rotLeft = false;
+	    movRight = false;
+	    movLeft = false;
+	    softDrp = false;
+	    hardDrp = false;
+	
+	    if(accumulatedTime >= timeInterval){
+    
+		accumulatedTime = 0;
+
+		//drop block by gravity				
+		if(detectLowestEdgeCollision(centerBlock.x, centerBlock.y) == false && centerBlock.dropped == false){
+		    cleanGrid();
+		    dropBlock(centerBlock.x, centerBlock.y);
+		    centerBlock.y = centerBlock.y+1;
+		    cleanGrid();
+		    
+		}
+		
+		else{
+		    centerBlock.dropped = true;
+		    //Assignment_4.playSound('media/sounds/SFX_PieceTouchDown', 1.0);
+		    
+		}
+
 		//check for filled row
 		for(i = 0; i < that.gridHeight; i++){
 		    filled = true;
@@ -1175,7 +1394,7 @@ Assignment_4.engine = (function() {
 			that.clearedRows = that.clearedRows+1;
 			that.scoreSum += 100;
 
-			Assignment_4.playSound('media/sounds/LineFilled', 1.0);
+			//Assignment_4.playSound('media/sounds/LineFilled', 1.0);
 			
 			//move down all above
 			for(l = 0; l < that.gridWidth; l++){
@@ -1190,200 +1409,50 @@ Assignment_4.engine = (function() {
 			
 
 			/*
-			for(k = i-1; k > 0; k--){
-			    for(l = 0; l < that.gridWidth; l++){
-				if(that.grid[k][l] != undefined){
-				    var currentBlock = {
-					x: l,
-					y: k,
-					dropped: false
+			  for(k = i-1; k > 0; k--){
+			  for(l = 0; l < that.gridWidth; l++){
+			  if(that.grid[k][l] != undefined){
+			  var currentBlock = {
+			  x: l,
+			  y: k,
+			  dropped: false
 
-				    };
-				    var temp;
+			  };
+			  var temp;
 
-				    while(currentBlock.dropped == false){
-					if(detectLowestEdgeCollision(currentBlock.x, currentBlock.y) == false){
-					    cleanGrid();
-					    //console.log("dropping ["+currentBlock.y+", "+currentBlock.x+"]");
-					    dropBlock(currentBlock.x, currentBlock.y);
-					    currentBlock.y = currentBlock.y+1;
-					    cleanGrid();
-					    
-					}
-					
-					else{
-					    currentBlock.dropped = true;
-					    console.log("block ["+currentBlock.y+", "+currentBlock.x+"]  dropped!");
-					    Assignment_4.playSound('media/sounds/SFX_PieceTouchDown', 1.0);
-					    
-					}
+			  while(currentBlock.dropped == false){
+			  if(detectLowestEdgeCollision(currentBlock.x, currentBlock.y) == false){
+			  cleanGrid();
+			  //console.log("dropping ["+currentBlock.y+", "+currentBlock.x+"]");
+			  dropBlock(currentBlock.x, currentBlock.y);
+			  currentBlock.y = currentBlock.y+1;
+			  cleanGrid();
+			  
+			  }
+			  
+			  else{
+			  currentBlock.dropped = true;
+			  console.log("block ["+currentBlock.y+", "+currentBlock.x+"]  dropped!");
+			  Assignment_4.playSound('media/sounds/SFX_PieceTouchDown', 1.0);
+			  
+			  }
 
-				    }
+			  }
 
-				}
+			  }
 
-			    }
+			  }
 
-			}
+			  }
 
 			*/
 
 		    }
 
-		}
-		
-		if(blockStack.length == 0){
-			blockStack.push(spawnBlock());
-			blockStack.push(spawnBlock());
-		}
-				
-		newBlock = blockStack.pop();
-
-		if (blockStack.length < 1) {
-			blockStack.push(spawnBlock());
-			blockStack.push(spawnBlock());
-		}
-
-        //Assign Next Block for Display Purposes
-		that.nextBlock = blockStack[blockStack.length - 1];
-		
-		//center block at top of grid
-		centerBlock.x = 4;
-		centerBlock.y = 1;	
-		
-		//copy block into grid
-		for(i = 0; i < 2; i++){
-		    for(j = 3; j < 7; j++){
-			if(newBlock.grid[i][j-3] != undefined){
-			    //console.log("copying y:"+i+" x:"+j);
-			    that.grid[i][j] = newBlock.grid[i][j-3];
-			    
-			    
-			}
-			
-		    }
-		    
-		}
-		
-		centerBlock.dropped = false;
-		
+		}	    
+	    
 	    }
-	    
-	    if(blockStack.length < 1){
-		blockStack.push(spawnBlock());
 		
-	    }
-	    
-	    //rotate
-	    if(rotRight == true && rotLeft == false){
-		cleanGrid();
-		rotateBlockRight(centerBlock.x, centerBlock.y);
-		cleanGrid();
-		
-		Assignment_4.playSound('media/sounds/SFX_PieceRotateLR', 1.0);
-		
-	    }
-	    
-	    else if(rotLeft == true && rotRight == false){
-		cleanGrid();
-		rotateBlockLeft(centerBlock.x, centerBlock.y);
-		cleanGrid();		
-		
-		Assignment_4.playSound('media/sounds/SFX_PieceRotateLR', 1.0);
-		
-	    }
-	    
-	    //move
-	    if(movRight == true && movLeft == false){
-		if(detectRightMostEdgeCollision(centerBlock.x, centerBlock.y) == false){
-		    cleanGrid();
-		    moveBlockRight(centerBlock.x, centerBlock.y);
-		    centerBlock.x = centerBlock.x+1;
-		    cleanGrid();
-
-		    Assignment_4.playSound('media/sounds/SFX_PieceMoveLR', 1.0);
-		    
-		}
-		
-	    }
-	    
-	    else if(movLeft == true && movRight == false){
-		if(detectLeftMostEdgeCollision(centerBlock.x, centerBlock.y) == false){
-		    cleanGrid();
-		    moveBlockLeft(centerBlock.x, centerBlock.y);
-		    centerBlock.x = centerBlock.x-1;
-		    cleanGrid();
-		    
-		    Assignment_4.playSound('media/sounds/SFX_PieceMoveLR', 1.0);
-		}
-		
-	    }
-	    
-	    //drop
-	    if(softDrp == true && hardDrp == false){
-		if(detectLowestEdgeCollision(centerBlock.x, centerBlock.y) == false){
-		    cleanGrid();
-		    dropBlock(centerBlock.x, centerBlock.y);
-		    centerBlock.y = centerBlock.y+1;
-		    cleanGrid();
-		    
-		}
-
-		else{
-		    centerBlock.dropped = true;
-		    Assignment_4.playSound('media/sounds/SFX_PieceTouchDown', 1.0);
-		
-		}
-		
-	    }
-
-	    
-	    
-	    else if(hardDrp == true && softDrp == false){
-		while(centerBlock.dropped == false){
-		    if(detectLowestEdgeCollision(centerBlock.x, centerBlock.y) == false){
-			cleanGrid();
-			dropBlock(centerBlock.x, centerBlock.y);
-			centerBlock.y = centerBlock.y+1;
-			cleanGrid();
-			
-		    }
-		    
-		    else{
-			centerBlock.dropped = true;
-			Assignment_4.playSound('media/sounds/SFX_PieceHardDrop', 1.0);
-			
-		    }
-
-		}
-		
-	    }
-	    
-	    //reset user inputs
-	    rotRight = false;
-	    rotLeft = false;
-	    movRight = false;
-	    movLeft = false;
-	    softDrp = false;
-	    hardDrp = false;
-	    
-	    //drop block by gravity				
-	    if(detectLowestEdgeCollision(centerBlock.x, centerBlock.y) == false && centerBlock.dropped == false){
-		cleanGrid();
-		dropBlock(centerBlock.x, centerBlock.y);
-		centerBlock.y = centerBlock.y+1;
-		cleanGrid();
-		
-	    }
-	    
-	    else{
-		centerBlock.dropped = true;
-		Assignment_4.playSound('media/sounds/SFX_PieceTouchDown', 1.0);
-		
-	    }
-	    
-	    
-	    
 	}
 	
 	return that;

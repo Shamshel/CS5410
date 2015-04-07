@@ -128,7 +128,7 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 				that.mainMenu.items[0].clicked = false;
 				
                 //TODO: Make it reapeat while in Game Play Menu State
-				Assignment_4.playSound('media/sounds/TetrisSong', 0.05);
+			    //Assignment_4.playSound('media/sounds/TetrisSong', 0.05);
 
 				result = DisplayGamePlayMenuState(gameFrame);
 				
@@ -314,8 +314,7 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 	            }
 	        }
 
-	        //FOR DEBUGGING HIGH SCORES ONLY
-	        if (that.gameMin > 0) {
+	        if (that.gameEngine.gameOver == true) {
 	            gameOver = true;
 	            gameFrame.renderBorder = false;
 	            result = DisplayGameOver(gameFrame, that.curScore);
@@ -327,7 +326,7 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 	        //TO DO: Update Current Score
 	        that.curScore = that.gameEngine.scoreSum;
 	        //TO DO: Update # of Lines
-			that.lines = that.gameEngine.clearedRows;
+		that.lines = that.gameEngine.clearedRows;
 			
 	        return result;
 
