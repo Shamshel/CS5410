@@ -60,6 +60,7 @@ window.addEventListener('load', function() {
                 'preload!scripts/Menu.js',
 				'preload!scripts/Input.js',
 				'preload!scripts/Frame.js',
+				'preload!scripts/solverAI.js',
 				'preload!scripts/Engine.js',
 				'preload!scripts/Game.js',
 				'preload!scripts/Assignment_4.js'
