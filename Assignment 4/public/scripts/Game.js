@@ -105,7 +105,8 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 	function MainMenuState(gameFrame) {
 		var that = {
 				mainMenu : menu.Menu('', ['New Game', 'Configure Controls', 'High Scores', 'Credits'], '', 100, gameFrame.width, gameFrame.height-100, true),
-				dead : false
+				dead: false,
+				aiTimer: 0
 			
 			};
 		
@@ -119,6 +120,18 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 			}
 			
 			var result = undefined;
+
+		    //Update AI Timer for Attract Mode
+			that.aiTimer += (elapsedTime / 1000);
+
+			if (that.aiTimer > 10) {
+
+			    //TODO: Make it reapeat while in Game Play Menu State
+			    //Assignment_4.playSound('media/sounds/TetrisSong', 0.05);
+			    that.aiTimer = 0;
+			    result = DisplayGamePlayMenuState(gameFrame, true);
+
+			}
 			
 			//display keybindings
 			if(that.mainMenu.items[0].clicked == true){
@@ -130,7 +143,8 @@ Assignment_4.game = (function(engine, menu, frame, input) {
                 //TODO: Make it reapeat while in Game Play Menu State
 			    //Assignment_4.playSound('media/sounds/TetrisSong', 0.05);
 
-				result = DisplayGamePlayMenuState(gameFrame);
+				that.aiTimer = 0;
+				result = DisplayGamePlayMenuState(gameFrame,false);
 				
 			}
 
@@ -143,6 +157,7 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 
 			    Assignment_4.playSound('media/sounds/arcadeSound', 0.75);
 
+			    that.aiTimer = 0;
 			    result = DisplayKeybindingMenuState(gameFrame);
 
 			}
@@ -155,6 +170,7 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 
 			    Assignment_4.playSound('media/sounds/arcadeSound', 0.75);
 
+			    that.aiTimer = 0;
 			    result = DisplayHighScoresMenuState(gameFrame);
 
 			}
@@ -167,6 +183,7 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 
 			    Assignment_4.playSound('media/sounds/arcadeSound', 0.75);
 
+			    that.aiTimer = 0;
 			    result = DisplayCreditsMenuState(gameFrame);
 
 			}
@@ -189,102 +206,126 @@ Assignment_4.game = (function(engine, menu, frame, input) {
     //
     //              --> Sub Menu of: 'MainMenuState'
     //--------------------------------------------------------------
-	function DisplayGamePlayMenuState(gameFrame) {
+	function DisplayGamePlayMenuState(gameFrame,aiOnFlag) {
 	    var that = {
-				gameEngine: engine.GameEngine(),
-				gridPxHeight: 0,
-				gridPxWidth: 0,
-				gameSec: 0,
-                gameMin: 0,
-				secCount: 0,
-                minCount: 0,
-				curScore: 0,
-				lines: 0,
-				infoX: gameFrame.info.x,
-				infoY: gameFrame.info.y,
-                infoW: gameFrame.info.width,
-                infoH: gameFrame.info.height,
-                nextbX: gameFrame.nextBlock.x,
-                nextbY: gameFrame.nextBlock.y,
-                nextbW: gameFrame.nextBlock.width,
-                nextbH: gameFrame.nextBlock.height,
-                gridImage: {
-                    image: Assignment_4.images['media/gridBlock.png'],
-                }
-			};
-        // Register UP
-	    if (input.controls.changeUp == true) {
+	        gameEngine: engine.GameEngine(aiOnFlag),
+            dead: false,
+			gridPxHeight: 0,
+			gridPxWidth: 0,
+			gameSec: 0,
+            gameMin: 0,
+			secCount: 0,
+            minCount: 0,
+			curScore: 0,
+			lines: 0,
+			infoX: gameFrame.info.x,
+			infoY: gameFrame.info.y,
+            infoW: gameFrame.info.width,
+            infoH: gameFrame.info.height,
+            nextbX: gameFrame.nextBlock.x,
+            nextbY: gameFrame.nextBlock.y,
+            nextbW: gameFrame.nextBlock.width,
+            nextbH: gameFrame.nextBlock.height,
+            gridImage: {
+                image: Assignment_4.images['media/gridBlock.png'],
+            }
+	    };
 
-	        keyboard.unRegisterCommand(input.controls.prevKeyUp, that.gameEngine.hardDrop);
-	        keyboard.registerCommand(input.controls.newKeyUp, that.gameEngine.hardDrop);
-	        input.controls.changeUp == false;
+	    function stopAiMode(){
+	        that.dead = true;
+	        gameFrame.renderBorder = false;
+
+	        window.removeEventListener('keydown', stopAiMode);
+	        window.removeEventListener('mousemove', stopAiMode);
+	        window.removeEventListener('mousedown', stopAiMode);
+
+	    };
+
+
+	    if (aiOnFlag === true) {
+
+	        window.addEventListener('keydown', stopAiMode);
+	        window.addEventListener('mousemove', stopAiMode);
+	        window.addEventListener('mousedown', stopAiMode);
+
 	    }
 
 	    else {
-	        keyboard.registerCommand(input.controls.prevKeyUp, that.gameEngine.hardDrop);
+	        // Register UP
+	        if (input.controls.changeUp == true) {
+
+	            keyboard.unRegisterCommand(input.controls.prevKeyUp, that.gameEngine.hardDrop);
+	            keyboard.registerCommand(input.controls.newKeyUp, that.gameEngine.hardDrop);
+	            input.controls.changeUp == false;
+	        }
+
+	        else {
+	            keyboard.registerCommand(input.controls.prevKeyUp, that.gameEngine.hardDrop);
+
+	        }
+	        // Register DOWN
+	        if (input.controls.changeDown == true) {
+
+	            keyboard.unRegisterCommand(input.controls.prevKeyDown, that.gameEngine.softDrop);
+	            keyboard.registerCommand(input.controls.newKeyDown, that.gameEngine.softDrop);
+	            input.controls.changeDown == false;
+	        }
+
+	        else {
+	            keyboard.registerCommand(input.controls.prevKeyDown, that.gameEngine.softDrop);
+
+	        }
+	        // Register LEFT
+	        if (input.controls.changeLeft == true) {
+
+	            keyboard.unRegisterCommand(input.controls.prevKeyLeft, that.gameEngine.moveLeft);
+	            keyboard.registerCommand(input.controls.newKeyLeft, that.gameEngine.moveLeft);
+	            input.controls.changeLeft == false;
+	        }
+
+	        else {
+	            keyboard.registerCommand(input.controls.prevKeyLeft, that.gameEngine.moveLeft);
+
+	        }
+	        // Register RIGHT
+	        if (input.controls.changeRight == true) {
+
+	            keyboard.unRegisterCommand(input.controls.prevKeyRight, that.gameEngine.moveRight);
+	            keyboard.registerCommand(input.controls.newKeyRight, that.gameEngine.moveRight);
+	            input.controls.changeRight == false;
+	        }
+
+	        else {
+	            keyboard.registerCommand(input.controls.prevKeyRight, that.gameEngine.moveRight);
+
+	        }
+	        // Register RotateLeft
+	        if (input.controls.changeRotateLeft == true) {
+
+	            keyboard.unRegisterCommand(input.controls.prevKeyRotateLeft, that.gameEngine.rotateLeft);
+	            keyboard.registerCommand(input.controls.newKeyRotateLeft, that.gameEngine.rotateLeft);
+	            input.controls.changeRotateLeft == false;
+	        }
+
+	        else {
+	            keyboard.registerCommand(input.controls.prevKeyRotateLeft, that.gameEngine.rotateLeft);
+
+	        }
+
+	        // Register RotateRight
+	        if (input.controls.changeRotateRight == true) {
+
+	            keyboard.unRegisterCommand(input.controls.prevKeyRotateRight, that.gameEngine.rotateRight);
+	            keyboard.registerCommand(input.controls.newKeyRotateRight, that.gameEngine.rotateRight);
+	            input.controls.changeRotateRight == false;
+	        }
+
+	        else {
+	            keyboard.registerCommand(input.controls.prevKeyRotateRight, that.gameEngine.rotateRight);
+
+	        }
 
 	    }
-	    // Register DOWN
-	    if (input.controls.changeDown == true) {
-
-	        keyboard.unRegisterCommand(input.controls.prevKeyDown, that.gameEngine.softDrop);
-	        keyboard.registerCommand(input.controls.newKeyDown, that.gameEngine.softDrop);
-	        input.controls.changeDown == false;
-	    }
-
-	    else {
-	        keyboard.registerCommand(input.controls.prevKeyDown, that.gameEngine.softDrop);
-
-	    }
-	    // Register LEFT
-	    if (input.controls.changeLeft == true) {
-
-	        keyboard.unRegisterCommand(input.controls.prevKeyLeft, that.gameEngine.moveLeft);
-	        keyboard.registerCommand(input.controls.newKeyLeft, that.gameEngine.moveLeft);
-	        input.controls.changeLeft == false;
-	    }
-
-	    else {
-	        keyboard.registerCommand(input.controls.prevKeyLeft, that.gameEngine.moveLeft);
-
-	    }
-	    // Register RIGHT
-		if(input.controls.changeRight == true){
-
-		    keyboard.unRegisterCommand(input.controls.prevKeyRight, that.gameEngine.moveRight);
-		    keyboard.registerCommand(input.controls.newKeyRight, that.gameEngine.moveRight);
-		    input.controls.changeRight == false;
-		}
-		
-		else{
-			keyboard.registerCommand(input.controls.prevKeyRight, that.gameEngine.moveRight);
-		
-		}
-	    // Register RotateLeft
-		if (input.controls.changeRotateLeft == true) {
-
-			keyboard.unRegisterCommand(input.controls.prevKeyRotateLeft, that.gameEngine.rotateLeft);
-			keyboard.registerCommand(input.controls.newKeyRotateLeft, that.gameEngine.rotateLeft);
-			input.controls.changeRotateLeft == false;
-		}
-		
-		else{
-		    keyboard.registerCommand(input.controls.prevKeyRotateLeft, that.gameEngine.rotateLeft);
-		
-		}
-		
-	    // Register RotateRight
-		if (input.controls.changeRotateRight == true) {
-
-		    keyboard.unRegisterCommand(input.controls.prevKeyRotateRight, that.gameEngine.rotateRight);
-		    keyboard.registerCommand(input.controls.newKeyRotateRight, that.gameEngine.rotateRight);
-		    input.controls.changeRotateRight == false;
-		}
-
-		else {
-		    keyboard.registerCommand(input.controls.prevKeyRotateRight, that.gameEngine.rotateRight);
-
-		}
 			
 		var i,
 			j;
@@ -318,15 +359,19 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 	            gameOver = true;
 	            gameFrame.renderBorder = false;
 	            result = DisplayGameOver(gameFrame, that.curScore);
-	            Assignment_4.addScore(that.curScore);
+
+	            if (aiOnFlag === false) {
+	                Assignment_4.addScore(that.curScore);
+	            }
+
 	            Assignment_4.stopSound('media/sounds/TetrisSong');
 	            Assignment_4.playSound('media/sounds/SFX_GameOver',1.0);
 	        }
 
-	        //TO DO: Update Current Score
+	        //Update Current Score
 	        that.curScore = that.gameEngine.scoreSum;
-	        //TO DO: Update # of Lines
-		that.lines = that.gameEngine.clearedRows;
+	        //Update # of Lines
+		    that.lines = that.gameEngine.clearedRows;
 			
 	        return result;
 
