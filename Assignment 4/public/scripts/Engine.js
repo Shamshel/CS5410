@@ -1,4 +1,4 @@
-Assignment_4.engine = (function() {
+Assignment_4.engine = (function(aI) {
     'use strict';
     
     console.log("initializing engine!");
@@ -307,16 +307,19 @@ Assignment_4.engine = (function() {
 	
     }
     
-    function GameEngine() {
+    function GameEngine(aiOnFlag) {
 	var that = {
 	    grid: [],
 	    gameOver: false,
+	    aiON: aiOnFlag,
 	    level: 1,
 	    scoreSum: 0,
 	    nextBlock: undefined,
 	    gridWidth: 10,
 	    gridHeight: 22,
-	    clearedRows: 0
+	    clearedRows: 0,
+	    gameAI: aI.aiJarvis(),
+        saveGrid: []
 	    
 	},
 	blockStack = [],
@@ -329,6 +332,9 @@ Assignment_4.engine = (function() {
 	},
 	timeInterval = 1000,
 	accumulatedTime = 0,
+    aiCount = 0,
+    moveIndex = 0,
+    centerF = false,
 	rotRight = false,
 	rotLeft = false,
 	movRight = false,
@@ -349,6 +355,17 @@ Assignment_4.engine = (function() {
 		
 	    }
 	    
+	}
+
+	for (i = 0; i < that.gridHeight; i++) {
+	    //push new row array
+	    that.saveGrid.push([]);
+	    for (j = 0; j < that.gridWidth; j++) {
+	        //push element into row array
+	        that.saveGrid[i].push(undefined);
+
+	    }
+
 	}
 	
 	//returns a random block
@@ -398,7 +415,7 @@ Assignment_4.engine = (function() {
 		
 	    }
 
-	    //result = InvSkewTet();
+	    //result = StraightTet();
 	    
 	    return result;
 	    
@@ -407,6 +424,8 @@ Assignment_4.engine = (function() {
 	function DFSStack(x, y){
 	    var blockStack = [];
 	    var result = [];
+
+	    cleanGrid();
 
 	    blockStack.push({
 		x: x,
@@ -1143,6 +1162,24 @@ Assignment_4.engine = (function() {
 
 	}
 
+	function hardDrop(x,y) {
+	    while (centerBlock.dropped == false) {
+	        if (detectLowestEdgeCollision(centerBlock.x, centerBlock.y) == false) {
+	            cleanGrid();
+	            dropBlock(centerBlock.x, centerBlock.y);
+	            centerBlock.y = centerBlock.y + 1;
+	            cleanGrid();
+
+	        }
+
+	        else {
+	            centerBlock.dropped = true;
+
+	        }
+
+	    }
+	}
+
 	//user controls
 	that.rotateRight = function(elapsedTime) {
 	    //console.log("rotate right!");
@@ -1192,63 +1229,1027 @@ Assignment_4.engine = (function() {
 	    
 	    //check if block has dropped and copy in a new one
 	    if(centerBlock.dropped == true){
-		var newBlock = undefined;
-		var i;
-		var j;
-		var k;
-		var l;
+		    var newBlock = undefined;
+		    var i;
+		    var j;
+		    var k;
+		    var l;
 
-		var filled;
+		    var filled;
 		
-		if(blockStack.length == 0){
-			blockStack.push(spawnBlock());
-			blockStack.push(spawnBlock());
-		}
-				
-		newBlock = blockStack.pop();
-
-		if (blockStack.length < 1) {
-			blockStack.push(spawnBlock());
-			blockStack.push(spawnBlock());
-		}
-
-		//Assign Next Block for Display Purposes
-		that.nextBlock = blockStack[blockStack.length - 1];
-
-		//center block at top of grid
-		centerBlock.x = 4;
-		centerBlock.y = 1;
-
-		//check if centerd block is overlapped by old block (game over)
-		if(that.grid[centerBlock.y][centerBlock.x] != undefined){
-		    that.gameOver = true;
-		    return;
-
-		}
-		
-		//copy block into grid
-		for(i = 0; i < 2; i++){
-		    for(j = 3; j < 7; j++){
-			if(newBlock.grid[i][j-3] != undefined){
-			    //console.log("copying y:"+i+" x:"+j);
-			    that.grid[i][j] = newBlock.grid[i][j-3];
-			    
-			    
-			}
-			
+		    if(blockStack.length == 0){
+			    blockStack.push(spawnBlock());
+			    blockStack.push(spawnBlock());
 		    }
+				
+		    newBlock = blockStack.pop();
+
+		    if (blockStack.length < 1) {
+			    blockStack.push(spawnBlock());
+			    blockStack.push(spawnBlock());
+		    }
+
+		    //Assign Next Block for Display Purposes
+		    that.nextBlock = blockStack[blockStack.length - 1];
+
+		    //center block at top of grid
+		    centerBlock.x = 4;
+		    centerBlock.y = 1;
+
+		    //check if centerd block is overlapped by old block (game over)
+		    if(that.grid[centerBlock.y][centerBlock.x] != undefined){
+		        that.gameOver = true;
+		        return;
+
+		    }
+
+	        //Save grid state before new block comes
+		    for (i = 0; i < that.gridHeight; i++) {
+		        for (j = 0; j < that.gridWidth; j++) {
+		            if (that.grid[i][j] == undefined) {
+		                that.saveGrid[i][j] = undefined;
+		            }
+		            else {
+		                that.saveGrid[i][j] = 1;
+		            }
+		        }
+		    }
+
+
+		    //copy block into grid
+		    for(i = 0; i < 2; i++){
+		        for(j = 3; j < 7; j++){
+			    if(newBlock.grid[i][j-3] != undefined){
+			        //console.log("copying y:"+i+" x:"+j);
+			        that.grid[i][j] = newBlock.grid[i][j-3];
+			    
+			    
+			    }
+			
+		        }
 		    
-		}
+		    }
+            
+		    if (that.aiON === true) {
+		        centerBlock.dropped = false;
+
+		        //--------------------------------------------------------------
+		        //
+		        //           AI CODE
+		        //
+		        //--------------------------------------------------------------
+
+		        //--------------------------------------------------------------
+		        //     Rotation 0 Left Moves
+		        //--------------------------------------------------------------
+		        that.gameAI.moveChosen = false;
+
+		        aiCount = 0;
+		        while (detectLeftMostEdgeCollision(centerBlock.x, centerBlock.y) == false) {
+
+		            aiCount++;
+
+		            //Move block left
+		            cleanGrid();
+		            moveBlockLeft(centerBlock.x, centerBlock.y);
+		            centerBlock.x = centerBlock.x - 1;
+		            cleanGrid();
+
+		            //Hard drop block
+		            hardDrop(centerBlock.x, centerBlock.y);
+
+		            //Score current grid
+		            that.gameAI.scoreGrid(that.grid);
+
+		            for (i = 0; i < (aiCount - 1) ; i++) {
+		                that.gameAI.moves[moveIndex].move.push(moveBlockLeft);
+		            }
+
+		            that.gameAI.moves[moveIndex].move.push(moveBlockLeft);
+		            that.gameAI.moves[moveIndex].move.push(hardDrop);
+
+		            //Clear dropped block
+		            for (i = 0; i < that.gridHeight; i++) {
+		                for (j = 0; j < that.gridWidth; j++) {
+		                    if (that.saveGrid[i][j] == undefined) {
+		                        that.grid[i][j] = undefined;
+		                    }
+		                }
+		            }
+
+		            //Reset block to center with (centerBlock.x -1)
+		            centerBlock.x = 4 - aiCount;
+		            centerBlock.y = 1;
+
+		            //copy block into grid
+		            for (i = 0; i < 2; i++) {
+		                for (j = 3; j < 7; j++) {
+		                    if (newBlock.grid[i][j - 3] != undefined) {
+		                        //console.log("copying y:"+i+" x:"+j);
+		                        that.grid[i][j - aiCount] = newBlock.grid[i][j - 3];
+
+
+		                    }
+
+		                }
+
+		            }
+
+		            moveIndex++;
+
+		            centerBlock.dropped = false;
+		            //REPEAT
+		        }
+
+		        //--------------------------------------------------------------
+		        //     RESET TO CENTER
+		        //--------------------------------------------------------------
+		        //Clear dropped block
+		        for (i = 0; i < that.gridHeight; i++) {
+		            for (j = 0; j < that.gridWidth; j++) {
+		                if (that.saveGrid[i][j] == undefined) {
+		                    that.grid[i][j] = undefined;
+		                }
+		            }
+		        }
+
+		        //Reset block to center with (centerBlock.x -1)
+		        centerBlock.x = 4;
+		        centerBlock.y = 1;
+
+		        aiCount = 0;
+
+		        //copy block into grid
+		        for (i = 0; i < 2; i++) {
+		            for (j = 3; j < 7; j++) {
+		                if (newBlock.grid[i][j - 3] != undefined) {
+		                    //console.log("copying y:"+i+" x:"+j);
+		                    that.grid[i][j - aiCount] = newBlock.grid[i][j - 3];
+
+
+		                }
+
+		            }
+
+		        }
+		        //--------------------------------------------------------------
+		        //     Rotation 0 Right Moves
+		        //--------------------------------------------------------------
+		        centerF = false;
+		        while (detectRightMostEdgeCollision(centerBlock.x, centerBlock.y) == false) {
+
+		            if (centerF == true) {
+		                aiCount++;
+
+		                //Move block right
+		                cleanGrid();
+		                moveBlockRight(centerBlock.x, centerBlock.y);
+		                centerBlock.x = centerBlock.x + 1;
+		                cleanGrid();
+
+		            }
+
+		            //Hard drop block
+		            hardDrop(centerBlock.x, centerBlock.y);
+
+		            //Score current grid
+		            that.gameAI.scoreGrid(that.grid);
+
+		            for (i = 0; i < (aiCount) ; i++) {
+		                that.gameAI.moves[moveIndex].move.push(moveBlockRight);
+		            }
+
+		            that.gameAI.moves[moveIndex].move.push(hardDrop);
+
+		            //Clear dropped block
+		            for (i = 0; i < that.gridHeight; i++) {
+		                for (j = 0; j < that.gridWidth; j++) {
+		                    if (that.saveGrid[i][j] == undefined) {
+		                        that.grid[i][j] = undefined;
+		                    }
+		                }
+		            }
+
+		            //Reset block to center with (centerBlock.x -1)
+		            centerBlock.x = 4 + aiCount;
+		            centerBlock.y = 1;
+
+		            //copy block into grid
+		            for (i = 0; i < 2; i++) {
+		                for (j = 3; j < 7; j++) {
+		                    if (newBlock.grid[i][j - 3] != undefined) {
+		                        //console.log("copying y:"+i+" x:"+j);
+		                        that.grid[i][j + aiCount] = newBlock.grid[i][j - 3];
+
+
+		                    }
+
+		                }
+
+		            }
+
+		            moveIndex++;
+
+		            centerF = true;
+		            centerBlock.dropped = false;
+		            //REPEAT
+		        }
+
+		        //--------------------------------------------------------------
+		        //     RESET TO CENTER
+		        //--------------------------------------------------------------
+
+		        //Clear dropped block
+		        for (i = 0; i < that.gridHeight; i++) {
+		            for (j = 0; j < that.gridWidth; j++) {
+		                if (that.saveGrid[i][j] == undefined) {
+		                    that.grid[i][j] = undefined;
+		                }
+		            }
+		        }
+
+		        //Reset block to center with (centerBlock.x -1)
+		        centerBlock.x = 4;
+		        centerBlock.y = 1;
+
+		        aiCount = 0;
+
+		        //copy block into grid
+		        for (i = 0; i < 2; i++) {
+		            for (j = 3; j < 7; j++) {
+		                if (newBlock.grid[i][j - 3] != undefined) {
+		                    //console.log("copying y:"+i+" x:"+j);
+		                    that.grid[i][j - aiCount] = newBlock.grid[i][j - 3];
+
+
+		                }
+
+		            }
+
+		        }
+
+		        //--------------------------------------------------------------
+		        //     Rotation 1 Left Moves
+		        //--------------------------------------------------------------
+		        while (detectLeftMostEdgeCollision(centerBlock.x, centerBlock.y) == false) {
+
+		            aiCount++;
+
+		            if (aiCount === 1) {
+		                //Rotate Right
+		                cleanGrid();
+		                rotateBlockRight(centerBlock.x, centerBlock.y);
+		                cleanGrid();
+		            }
+
+		            //Move block left
+		            cleanGrid();
+		            moveBlockLeft(centerBlock.x, centerBlock.y);
+		            centerBlock.x = centerBlock.x - 1;
+		            cleanGrid();
+
+		            //Hard drop block
+		            hardDrop(centerBlock.x, centerBlock.y);
+
+		            //Score current grid
+		            that.gameAI.scoreGrid(that.grid);
+
+		            that.gameAI.moves[moveIndex].move.push(rotateBlockRight);
+
+		            for (i = 0; i < (aiCount - 1) ; i++) {
+		                that.gameAI.moves[moveIndex].move.push(moveBlockLeft);
+		            }
+
+		            that.gameAI.moves[moveIndex].move.push(moveBlockLeft);
+		            that.gameAI.moves[moveIndex].move.push(hardDrop);
+
+		            //Clear dropped block
+		            for (i = 0; i < that.gridHeight; i++) {
+		                for (j = 0; j < that.gridWidth; j++) {
+		                    if (that.saveGrid[i][j] == undefined) {
+		                        that.grid[i][j] = undefined;
+		                    }
+		                }
+		            }
+
+		            //Reset block to center with (centerBlock.x - aiCount)
+		            centerBlock.x = 4;
+		            centerBlock.y = 1;
+
+		            //copy block into grid
+		            for (i = 0; i < 2; i++) {
+		                for (j = 3; j < 7; j++) {
+		                    if (newBlock.grid[i][j - 3] != undefined) {
+		                        //console.log("copying y:"+i+" x:"+j);
+		                        that.grid[i][j] = newBlock.grid[i][j - 3];
+
+
+		                    }
+
+		                }
+
+		            }
+
+
+
+		            //Rotate Right
+		            cleanGrid();
+		            rotateBlockRight(centerBlock.x, centerBlock.y);
+		            cleanGrid();
+
+		            for (i = 0; i < aiCount; i++) {
+		                //Move block left
+		                cleanGrid();
+		                moveBlockLeft(centerBlock.x, centerBlock.y);
+		                centerBlock.x = centerBlock.x - 1;
+		                cleanGrid();
+		            }
+
+		            moveIndex++;
+
+		            centerBlock.dropped = false;
+		            //REPEAT
+		        }
+
+		        //--------------------------------------------------------------
+		        //     RESET TO CENTER
+		        //--------------------------------------------------------------
+
+		        //Clear dropped block
+		        for (i = 0; i < that.gridHeight; i++) {
+		            for (j = 0; j < that.gridWidth; j++) {
+		                if (that.saveGrid[i][j] == undefined) {
+		                    that.grid[i][j] = undefined;
+		                }
+		            }
+		        }
+
+		        //Reset block to center with (centerBlock.x -1)
+		        centerBlock.x = 4;
+		        centerBlock.y = 1;
+
+		        aiCount = 0;
+
+		        //copy block into grid
+		        for (i = 0; i < 2; i++) {
+		            for (j = 3; j < 7; j++) {
+		                if (newBlock.grid[i][j - 3] != undefined) {
+		                    //console.log("copying y:"+i+" x:"+j);
+		                    that.grid[i][j - aiCount] = newBlock.grid[i][j - 3];
+
+
+		                }
+
+		            }
+
+		        }
+		        //--------------------------------------------------------------
+		        //     Rotation 1 Right Moves
+		        //--------------------------------------------------------------
+		        centerF = false;
+		        while (detectRightMostEdgeCollision(centerBlock.x, centerBlock.y) == false) {
+
+		            if (centerF == true) {
+		                aiCount++;
+
+		                //Move block right
+		                cleanGrid();
+		                moveBlockRight(centerBlock.x, centerBlock.y);
+		                centerBlock.x = centerBlock.x + 1;
+		                cleanGrid();
+
+		            }
+
+		            if (aiCount === 0) {
+		                //Rotate Right
+		                cleanGrid();
+		                rotateBlockRight(centerBlock.x, centerBlock.y);
+		                cleanGrid();
+		            }
+
+		            //Hard drop block
+		            hardDrop(centerBlock.x, centerBlock.y);
+
+		            //Score current grid
+		            that.gameAI.scoreGrid(that.grid);
+
+		            that.gameAI.moves[moveIndex].move.push(rotateBlockRight);
+
+		            for (i = 0; i < (aiCount) ; i++) {
+		                that.gameAI.moves[moveIndex].move.push(moveBlockRight);
+		            }
+
+		            that.gameAI.moves[moveIndex].move.push(hardDrop);
+
+		            //Clear dropped block
+		            for (i = 0; i < that.gridHeight; i++) {
+		                for (j = 0; j < that.gridWidth; j++) {
+		                    if (that.saveGrid[i][j] == undefined) {
+		                        that.grid[i][j] = undefined;
+		                    }
+		                }
+		            }
+
+		            //Reset block to center with (centerBlock.x -1)
+		            centerBlock.x = 4;
+		            centerBlock.y = 1;
+
+		            //copy block into grid
+		            for (i = 0; i < 2; i++) {
+		                for (j = 3; j < 7; j++) {
+		                    if (newBlock.grid[i][j - 3] != undefined) {
+		                        //console.log("copying y:"+i+" x:"+j);
+		                        that.grid[i][j] = newBlock.grid[i][j - 3];
+
+
+		                    }
+
+		                }
+
+		            }
+
+		            //Rotate Right
+		            cleanGrid();
+		            rotateBlockRight(centerBlock.x, centerBlock.y);
+		            cleanGrid();
+
+		            for (i = 0; i < aiCount; i++) {
+		                //Move block left
+		                cleanGrid();
+		                moveBlockRight(centerBlock.x, centerBlock.y);
+		                centerBlock.x = centerBlock.x + 1;
+		                cleanGrid();
+		            }
+
+		            moveIndex++;
+		            centerF = true;
+		            centerBlock.dropped = false;
+		            //REPEAT
+		        }
+
+		        //--------------------------------------------------------------
+		        //     RESET TO CENTER
+		        //--------------------------------------------------------------
+
+		        //Clear dropped block
+		        for (i = 0; i < that.gridHeight; i++) {
+		            for (j = 0; j < that.gridWidth; j++) {
+		                if (that.saveGrid[i][j] == undefined) {
+		                    that.grid[i][j] = undefined;
+		                }
+		            }
+		        }
+
+		        //Reset block to center with (centerBlock.x -1)
+		        centerBlock.x = 4;
+		        centerBlock.y = 1;
+
+		        aiCount = 0;
+
+		        //copy block into grid
+		        for (i = 0; i < 2; i++) {
+		            for (j = 3; j < 7; j++) {
+		                if (newBlock.grid[i][j - 3] != undefined) {
+		                    //console.log("copying y:"+i+" x:"+j);
+		                    that.grid[i][j - aiCount] = newBlock.grid[i][j - 3];
+
+
+		                }
+
+		            }
+
+		        }
+		        //--------------------------------------------------------------
+		        //     Rotation 2 Left Moves
+		        //--------------------------------------------------------------
+		        while (detectLeftMostEdgeCollision(centerBlock.x, centerBlock.y) == false) {
+
+		            aiCount++;
+
+		            if (aiCount === 1) {
+		                //Rotate Right
+		                cleanGrid();
+		                rotateBlockRight(centerBlock.x, centerBlock.y);
+		                cleanGrid();
+
+		                //Rotate Right
+		                cleanGrid();
+		                rotateBlockRight(centerBlock.x, centerBlock.y);
+		                cleanGrid();
+		            }
+
+		            //Move block left
+		            cleanGrid();
+		            moveBlockLeft(centerBlock.x, centerBlock.y);
+		            centerBlock.x = centerBlock.x - 1;
+		            cleanGrid();
+
+		            //Hard drop block
+		            hardDrop(centerBlock.x, centerBlock.y);
+
+		            //Score current grid
+		            that.gameAI.scoreGrid(that.grid);
+
+		            that.gameAI.moves[moveIndex].move.push(rotateBlockRight);
+		            that.gameAI.moves[moveIndex].move.push(rotateBlockRight);
+
+		            for (i = 0; i < (aiCount - 1) ; i++) {
+		                that.gameAI.moves[moveIndex].move.push(moveBlockLeft);
+		            }
+
+		            that.gameAI.moves[moveIndex].move.push(moveBlockLeft);
+		            that.gameAI.moves[moveIndex].move.push(hardDrop);
+
+		            //Clear dropped block
+		            for (i = 0; i < that.gridHeight; i++) {
+		                for (j = 0; j < that.gridWidth; j++) {
+		                    if (that.saveGrid[i][j] == undefined) {
+		                        that.grid[i][j] = undefined;
+		                    }
+		                }
+		            }
+
+		            //Reset block to center with (centerBlock.x - aiCount)
+		            centerBlock.x = 4;
+		            centerBlock.y = 1;
+
+		            //copy block into grid
+		            for (i = 0; i < 2; i++) {
+		                for (j = 3; j < 7; j++) {
+		                    if (newBlock.grid[i][j - 3] != undefined) {
+		                        //console.log("copying y:"+i+" x:"+j);
+		                        that.grid[i][j] = newBlock.grid[i][j - 3];
+
+
+		                    }
+
+		                }
+
+		            }
+
+
+
+		            //Rotate Right
+		            cleanGrid();
+		            rotateBlockRight(centerBlock.x, centerBlock.y);
+		            cleanGrid();
+
+		            //Rotate Right
+		            cleanGrid();
+		            rotateBlockRight(centerBlock.x, centerBlock.y);
+		            cleanGrid();
+
+		            for (i = 0; i < aiCount; i++) {
+		                //Move block left
+		                cleanGrid();
+		                moveBlockLeft(centerBlock.x, centerBlock.y);
+		                centerBlock.x = centerBlock.x - 1;
+		                cleanGrid();
+		            }
+
+		            moveIndex++;
+
+		            centerBlock.dropped = false;
+		            //REPEAT
+		        }
+
+		        //--------------------------------------------------------------
+		        //     RESET TO CENTER
+		        //--------------------------------------------------------------
+
+		        //Clear dropped block
+		        for (i = 0; i < that.gridHeight; i++) {
+		            for (j = 0; j < that.gridWidth; j++) {
+		                if (that.saveGrid[i][j] == undefined) {
+		                    that.grid[i][j] = undefined;
+		                }
+		            }
+		        }
+
+		        //Reset block to center with (centerBlock.x -1)
+		        centerBlock.x = 4;
+		        centerBlock.y = 1;
+
+		        aiCount = 0;
+
+		        //copy block into grid
+		        for (i = 0; i < 2; i++) {
+		            for (j = 3; j < 7; j++) {
+		                if (newBlock.grid[i][j - 3] != undefined) {
+		                    //console.log("copying y:"+i+" x:"+j);
+		                    that.grid[i][j - aiCount] = newBlock.grid[i][j - 3];
+
+
+		                }
+
+		            }
+
+		        }
+		        //--------------------------------------------------------------
+		        //     Rotation 2 Right Moves
+		        //--------------------------------------------------------------
+		        centerF = false;
+		        while (detectRightMostEdgeCollision(centerBlock.x, centerBlock.y) == false) {
+
+		            if (centerF == true) {
+		                aiCount++;
+
+		                //Move block right
+		                cleanGrid();
+		                moveBlockRight(centerBlock.x, centerBlock.y);
+		                centerBlock.x = centerBlock.x + 1;
+		                cleanGrid();
+
+		            }
+
+		            if (aiCount === 0) {
+		                //Rotate Right
+		                cleanGrid();
+		                rotateBlockRight(centerBlock.x, centerBlock.y);
+		                cleanGrid();
+
+		                //Rotate Right
+		                cleanGrid();
+		                rotateBlockRight(centerBlock.x, centerBlock.y);
+		                cleanGrid();
+		            }
+
+		            //Hard drop block
+		            hardDrop(centerBlock.x, centerBlock.y);
+
+		            //Score current grid
+		            that.gameAI.scoreGrid(that.grid);
+
+		            that.gameAI.moves[moveIndex].move.push(rotateBlockRight);
+		            that.gameAI.moves[moveIndex].move.push(rotateBlockRight);
+
+		            for (i = 0; i < (aiCount) ; i++) {
+		                that.gameAI.moves[moveIndex].move.push(moveBlockRight);
+		            }
+
+		            that.gameAI.moves[moveIndex].move.push(hardDrop);
+
+		            //Clear dropped block
+		            for (i = 0; i < that.gridHeight; i++) {
+		                for (j = 0; j < that.gridWidth; j++) {
+		                    if (that.saveGrid[i][j] == undefined) {
+		                        that.grid[i][j] = undefined;
+		                    }
+		                }
+		            }
+
+		            //Reset block to center with (centerBlock.x -1)
+		            centerBlock.x = 4;
+		            centerBlock.y = 1;
+
+		            //copy block into grid
+		            for (i = 0; i < 2; i++) {
+		                for (j = 3; j < 7; j++) {
+		                    if (newBlock.grid[i][j - 3] != undefined) {
+		                        //console.log("copying y:"+i+" x:"+j);
+		                        that.grid[i][j] = newBlock.grid[i][j - 3];
+
+
+		                    }
+
+		                }
+
+		            }
+
+		            //Rotate Right
+		            cleanGrid();
+		            rotateBlockRight(centerBlock.x, centerBlock.y);
+		            cleanGrid();
+
+		            //Rotate Right
+		            cleanGrid();
+		            rotateBlockRight(centerBlock.x, centerBlock.y);
+		            cleanGrid();
+
+		            for (i = 0; i < aiCount; i++) {
+		                //Move block left
+		                cleanGrid();
+		                moveBlockRight(centerBlock.x, centerBlock.y);
+		                centerBlock.x = centerBlock.x + 1;
+		                cleanGrid();
+		            }
+
+		            moveIndex++;
+		            centerF = true;
+		            centerBlock.dropped = false;
+		            //REPEAT
+		        }
+
+		        //--------------------------------------------------------------
+		        //     RESET TO CENTER
+		        //--------------------------------------------------------------
+
+		        //Clear dropped block
+		        for (i = 0; i < that.gridHeight; i++) {
+		            for (j = 0; j < that.gridWidth; j++) {
+		                if (that.saveGrid[i][j] == undefined) {
+		                    that.grid[i][j] = undefined;
+		                }
+		            }
+		        }
+
+		        //Reset block to center with (centerBlock.x -1)
+		        centerBlock.x = 4;
+		        centerBlock.y = 1;
+
+		        aiCount = 0;
+
+		        //copy block into grid
+		        for (i = 0; i < 2; i++) {
+		            for (j = 3; j < 7; j++) {
+		                if (newBlock.grid[i][j - 3] != undefined) {
+		                    //console.log("copying y:"+i+" x:"+j);
+		                    that.grid[i][j - aiCount] = newBlock.grid[i][j - 3];
+
+
+		                }
+
+		            }
+
+		        }
+
+		        //--------------------------------------------------------------
+		        //     Rotation 3 Left Moves
+		        //--------------------------------------------------------------
+		        while (detectLeftMostEdgeCollision(centerBlock.x, centerBlock.y) == false) {
+
+		            aiCount++;
+
+		            if (aiCount === 1) {
+		                //Rotate Left
+		                cleanGrid();
+		                rotateBlockLeft(centerBlock.x, centerBlock.y);
+		                cleanGrid();
+		            }
+
+		            //Move block left
+		            cleanGrid();
+		            moveBlockLeft(centerBlock.x, centerBlock.y);
+		            centerBlock.x = centerBlock.x - 1;
+		            cleanGrid();
+
+		            //Hard drop block
+		            hardDrop(centerBlock.x, centerBlock.y);
+
+		            //Score current grid
+		            that.gameAI.scoreGrid(that.grid);
+
+		            that.gameAI.moves[moveIndex].move.push(rotateBlockLeft);
+
+		            for (i = 0; i < (aiCount - 1) ; i++) {
+		                that.gameAI.moves[moveIndex].move.push(moveBlockLeft);
+		            }
+
+		            that.gameAI.moves[moveIndex].move.push(moveBlockLeft);
+		            that.gameAI.moves[moveIndex].move.push(hardDrop);
+
+		            //Clear dropped block
+		            for (i = 0; i < that.gridHeight; i++) {
+		                for (j = 0; j < that.gridWidth; j++) {
+		                    if (that.saveGrid[i][j] == undefined) {
+		                        that.grid[i][j] = undefined;
+		                    }
+		                }
+		            }
+
+		            //Reset block to center with (centerBlock.x - aiCount)
+		            centerBlock.x = 4;
+		            centerBlock.y = 1;
+
+		            //copy block into grid
+		            for (i = 0; i < 2; i++) {
+		                for (j = 3; j < 7; j++) {
+		                    if (newBlock.grid[i][j - 3] != undefined) {
+		                        //console.log("copying y:"+i+" x:"+j);
+		                        that.grid[i][j] = newBlock.grid[i][j - 3];
+
+
+		                    }
+
+		                }
+
+		            }
+
+
+
+		            //Rotate Left
+		            cleanGrid();
+		            rotateBlockLeft(centerBlock.x, centerBlock.y);
+		            cleanGrid();
+
+		            for (i = 0; i < aiCount; i++) {
+		                //Move block left
+		                cleanGrid();
+		                moveBlockLeft(centerBlock.x, centerBlock.y);
+		                centerBlock.x = centerBlock.x - 1;
+		                cleanGrid();
+		            }
+
+		            moveIndex++;
+
+		            centerBlock.dropped = false;
+		            //REPEAT
+		        }
+
+		        //--------------------------------------------------------------
+		        //     RESET TO CENTER
+		        //--------------------------------------------------------------
+
+		        //Clear dropped block
+		        for (i = 0; i < that.gridHeight; i++) {
+		            for (j = 0; j < that.gridWidth; j++) {
+		                if (that.saveGrid[i][j] == undefined) {
+		                    that.grid[i][j] = undefined;
+		                }
+		            }
+		        }
+
+		        //Reset block to center with (centerBlock.x -1)
+		        centerBlock.x = 4;
+		        centerBlock.y = 1;
+
+		        aiCount = 0;
+
+		        //copy block into grid
+		        for (i = 0; i < 2; i++) {
+		            for (j = 3; j < 7; j++) {
+		                if (newBlock.grid[i][j - 3] != undefined) {
+		                    //console.log("copying y:"+i+" x:"+j);
+		                    that.grid[i][j - aiCount] = newBlock.grid[i][j - 3];
+
+
+		                }
+
+		            }
+
+		        }
+		        //--------------------------------------------------------------
+		        //     Rotation 3 Right Moves
+		        //--------------------------------------------------------------
+		        centerF = false;
+		        while (detectRightMostEdgeCollision(centerBlock.x, centerBlock.y) == false) {
+
+		            if (centerF == true) {
+		                aiCount++;
+
+		                //Move block right
+		                cleanGrid();
+		                moveBlockRight(centerBlock.x, centerBlock.y);
+		                centerBlock.x = centerBlock.x + 1;
+		                cleanGrid();
+
+		            }
+
+		            if (aiCount === 0) {
+		                //Rotate Left
+		                cleanGrid();
+		                rotateBlockLeft(centerBlock.x, centerBlock.y);
+		                cleanGrid();
+		            }
+
+		            //Hard drop block
+		            hardDrop(centerBlock.x, centerBlock.y);
+
+		            //Score current grid
+		            that.gameAI.scoreGrid(that.grid);
+
+		            that.gameAI.moves[moveIndex].move.push(rotateBlockLeft);
+
+		            for (i = 0; i < (aiCount) ; i++) {
+		                that.gameAI.moves[moveIndex].move.push(moveBlockRight);
+		            }
+
+		            that.gameAI.moves[moveIndex].move.push(hardDrop);
+
+		            //Clear dropped block
+		            for (i = 0; i < that.gridHeight; i++) {
+		                for (j = 0; j < that.gridWidth; j++) {
+		                    if (that.saveGrid[i][j] == undefined) {
+		                        that.grid[i][j] = undefined;
+		                    }
+		                }
+		            }
+
+		            //Reset block to center with (centerBlock.x -1)
+		            centerBlock.x = 4;
+		            centerBlock.y = 1;
+
+		            //copy block into grid
+		            for (i = 0; i < 2; i++) {
+		                for (j = 3; j < 7; j++) {
+		                    if (newBlock.grid[i][j - 3] != undefined) {
+		                        //console.log("copying y:"+i+" x:"+j);
+		                        that.grid[i][j] = newBlock.grid[i][j - 3];
+
+
+		                    }
+
+		                }
+
+		            }
+
+		            //Rotate Left
+		            cleanGrid();
+		            rotateBlockLeft(centerBlock.x, centerBlock.y);
+		            cleanGrid();
+
+		            for (i = 0; i < aiCount; i++) {
+		                //Move block left
+		                cleanGrid();
+		                moveBlockRight(centerBlock.x, centerBlock.y);
+		                centerBlock.x = centerBlock.x + 1;
+		                cleanGrid();
+		            }
+
+		            moveIndex++;
+		            centerF = true;
+		            centerBlock.dropped = false;
+		            //REPEAT
+		        }
+		        //--------------------------------------------------------------
+		        //  FINAL RESET TO CENTER
+		        //--------------------------------------------------------------
+
+		        moveIndex = 0;
+
+		        //Clear dropped block
+		        for (i = 0; i < that.gridHeight; i++) {
+		            for (j = 0; j < that.gridWidth; j++) {
+		                if (that.saveGrid[i][j] == undefined) {
+		                    that.grid[i][j] = undefined;
+		                }
+		            }
+		        }
+
+		        //Reset block to center with (centerBlock.x -1)
+		        centerBlock.x = 4;
+		        centerBlock.y = 1;
+
+		        //copy block into grid
+		        for (i = 0; i < 2; i++) {
+		            for (j = 3; j < 7; j++) {
+		                if (newBlock.grid[i][j - 3] != undefined) {
+		                    //console.log("copying y:"+i+" x:"+j);
+		                    that.grid[i][j] = newBlock.grid[i][j - 3];
+
+
+		                }
+
+		            }
+
+		        }
+
+		        //--------------------------------------------------------------
+		        //     Compare Moves and Choose Best Move
+		        //--------------------------------------------------------------
+
+		        that.gameAI.compareMoves();
+
+		        //--------------------------------------------------------------
+		        //     END OF AI MOVE DECISION CODE
+		        //--------------------------------------------------------------
+
+		    } //END OF IF STATEMENT FOR aiON
+
+		    centerBlock.dropped = false;
 		
-		centerBlock.dropped = false;
-		
-	    }
+	    } // END OF if(centerBlock.dropped == true){
 	    
 	    if(blockStack.length < 1){
 		blockStack.push(spawnBlock());
 		
 	    }
-	    
+
+	    if (that.aiON === true) {
+	        //--------------------------------------------------------------
+	        //     If AI MODE, AI Will Choose Moves
+	        //--------------------------------------------------------------
+
+	        //Run Movement Function
+	        cleanGrid();
+	        that.gameAI.moves[0].move[0](centerBlock.x, centerBlock.y);
+	        if (that.gameAI.moves[0].move[0] === moveBlockLeft) {
+	            centerBlock.x = centerBlock.x - 1;
+	        }
+	        else if (that.gameAI.moves[0].move[0] === moveBlockRight) {
+	            centerBlock.x = centerBlock.x + 1;
+	        }
+	        cleanGrid();
+
+	        //Remove Used Move
+	        that.gameAI.moves[0].move.splice(0, 1);
+
+	        if (that.gameAI.moves[0].move.length === 0) {
+	            that.gameAI.moves.length = 0;
+	        }
+
+	    }
+
 	    //rotate
 	    if(rotRight == true && rotLeft == false){
 		cleanGrid();
@@ -1273,7 +2274,7 @@ Assignment_4.engine = (function() {
 		if(detectRightMostEdgeCollision(centerBlock.x, centerBlock.y) == false){
 		    cleanGrid();
 		    moveBlockRight(centerBlock.x, centerBlock.y);
-		    centerBlock.x = centerBlock.x+1;
+		    centerBlock.x = centerBlock.x + 1;
 		    cleanGrid();
 
 		    //Assignment_4.playSound('media/sounds/SFX_PieceMoveLR', 1.0);
@@ -1286,7 +2287,7 @@ Assignment_4.engine = (function() {
 		if(detectLeftMostEdgeCollision(centerBlock.x, centerBlock.y) == false){
 		    cleanGrid();
 		    moveBlockLeft(centerBlock.x, centerBlock.y);
-		    centerBlock.x = centerBlock.x-1;
+		    centerBlock.x = centerBlock.x - 1;
 		    cleanGrid();
 		    
 		    //Assignment_4.playSound('media/sounds/SFX_PieceMoveLR', 1.0);
@@ -1464,4 +2465,4 @@ Assignment_4.engine = (function() {
 	
     };
     
-}());
+}(Assignment_4.sovlerAI));
