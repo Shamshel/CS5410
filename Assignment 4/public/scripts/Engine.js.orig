@@ -414,6 +414,11 @@ Assignment_4.engine = (function(aI) {
 		result = OutJTet();
 		
 	    }
+<<<<<<< HEAD
+=======
+
+	    //result = StraightTet();
+>>>>>>> ab249b80651edfeb93a46d08a10a0ae9c9e0d97f
 	    
 	    return result;
 	    
@@ -2253,6 +2258,8 @@ Assignment_4.engine = (function(aI) {
 		blockStack.push(spawnBlock());
 		
 	    }
+<<<<<<< HEAD
+=======
 
 	    if (that.aiON === true) {
 	        //--------------------------------------------------------------
@@ -2279,11 +2286,36 @@ Assignment_4.engine = (function(aI) {
 
 	    }
 
+	    //rotate
+	    if(rotRight == true && rotLeft == false){
+		cleanGrid();
+		rotateBlockRight(centerBlock.x, centerBlock.y);
+		cleanGrid();
+		
+		//Assignment_4.playSound('media/sounds/SFX_PieceRotateLR', 1.0);
+		
+	    }
+	    
+	    else if(rotLeft == true && rotRight == false){
+		cleanGrid();
+		rotateBlockLeft(centerBlock.x, centerBlock.y);
+		cleanGrid();		
+		
+		//Assignment_4.playSound('media/sounds/SFX_PieceRotateLR', 1.0);
+		
+	    }
+>>>>>>> ab249b80651edfeb93a46d08a10a0ae9c9e0d97f
+	    
 	    //move
 	    if(movRight == true && movLeft == false){
 		if(detectRightMostEdgeCollision(centerBlock.x, centerBlock.y) == false){
 		    moveBlockRight(centerBlock.x, centerBlock.y);
+<<<<<<< HEAD
+		    centerBlock.x = centerBlock.x+1;
+=======
 		    centerBlock.x = centerBlock.x + 1;
+		    cleanGrid();
+>>>>>>> ab249b80651edfeb93a46d08a10a0ae9c9e0d97f
 
 		    //Assignment_4.playSound('media/sounds/SFX_PieceMoveLR', 1.0);
 		    
@@ -2294,7 +2326,12 @@ Assignment_4.engine = (function(aI) {
 	    else if(movLeft == true && movRight == false){
 		if(detectLeftMostEdgeCollision(centerBlock.x, centerBlock.y) == false){
 		    moveBlockLeft(centerBlock.x, centerBlock.y);
+<<<<<<< HEAD
+		    centerBlock.x = centerBlock.x-1;
+=======
 		    centerBlock.x = centerBlock.x - 1;
+		    cleanGrid();
+>>>>>>> ab249b80651edfeb93a46d08a10a0ae9c9e0d97f
 		    
 		    //Assignment_4.playSound('media/sounds/SFX_PieceMoveLR', 1.0);
 		}

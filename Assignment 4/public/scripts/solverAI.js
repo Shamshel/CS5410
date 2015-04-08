@@ -24,9 +24,9 @@ Assignment_4.sovlerAI = (function() {
             j = 0
 
         //Make array of moves (40 different moves in total)
-        for (i = 0; i < 40; i++) {
-            that.moves[i] = { height: undefined, holes: undefined, smooth: undefined, lines: undefined };
-        }
+        //for (i = 0; i < 40; i++) {
+        //    that.moves[i] = { height: undefined, holes: undefined, smooth: undefined, lines: undefined };
+        //}
 
         //Make empty grids
         for (i = 0; i < 22; i++) {
@@ -58,7 +58,7 @@ Assignment_4.sovlerAI = (function() {
         };
 
         //Sets total height and smoothness of current grid after tried move
-        that.solveHeightSmooth = function (index) {
+        that.solveHeightSmooth = function () {
             var i = 0,
                 j = 0,
                 sumH = 0,
@@ -82,12 +82,12 @@ Assignment_4.sovlerAI = (function() {
                 sumS += Math.abs(cols[i]-cols[i+1]);
             }
 
-            that.moves[index].smooth = sumS; 
-            that.moves[index].height = sumH;
+            that.moves[that.moves.length - 1].smooth = sumS; 
+            that.moves[that.moves.length - 1].height = sumH;
         };
 
         //Sets total # of holes in current grid after tried move
-        that.solveHoles = function (index) {
+        that.solveHoles = function () {
             var i = 0,
                 j = 0,
                 sumH = 0
@@ -97,17 +97,23 @@ Assignment_4.sovlerAI = (function() {
                 for(j = 0; j < 10; j++){
                     if(that.testGrid[i][j] == undefined){
                         if(that.testGrid[i-1][j] != undefined){
-                            sumH++;   
+                            if (j === 0 || j === 9) {
+                                sumH += 2;
+                            }
+                            else {
+                                sumH++;
+                            }
+                            
                         }
                     }
                 }
             }
 
-            that.moves[index].holes = sumH; 
+            that.moves[that.moves.length - 1].holes = sumH;
         };
 
         //Sets total # of lines cleared after tried move
-        that.solveLinesCleared = function (index) {
+        that.solveLinesCleared = function () {
             var i = 0,
                 j = 0,
                 sumL = 0,
@@ -126,68 +132,67 @@ Assignment_4.sovlerAI = (function() {
                 emptyF = true;
             }
 
-            that.moves[index].lines = sumL; 
+            that.moves[that.moves.length - 1].lines = sumL;
         };
 
         //Compares two moves' parameters to see which is better
-        that.compareMoves = function (move1, move2) {
+        that.compareMoves = function () {
 
-        };
+            var heightVar = -0.60,
+                holeVar = -0.45,
+                smoothVar = -0.30,
+                lineVar = 1;
 
-        //Rotate the block to chosen rotation
-        that.rotateBlock = function () {
+            //0.66569 , 0.99275 , 0.46544 , 0.24077
 
-        };
+            while (that.moveChosen == false) {
 
-        //Moves the block to chosen position
-        that.moveBlock = function () {
+                //Calculate Scores
+                //SCORE HEIGHT
+                that.moves[0].score += (that.moves[0].height) * heightVar;
+                that.moves[1].score += (that.moves[1].height) * heightVar;
 
-        };
+                //SCORE HOLES
+                that.moves[0].score += (that.moves[0].holes) * holeVar;
+                that.moves[1].score += (that.moves[1].holes) * holeVar;
 
-        that.update = function (elapsedTime, gameGrid, blockDropFlag, nextBlock) {
+                //SCORE SMOOTH
+                that.moves[0].score += (that.moves[0].smooth) * smoothVar;
+                that.moves[1].score += (that.moves[1].smooth) * smoothVar;
 
-            //if there is a new block to fall, or if the game has just started
-            if (blockDropFlag === true) {
-                that.createGrid(gameGrid,that.curGrid);
-                that.createGrid(gameGrid,that.testGrid);
-                that.nextBlock = nextBlock;
-                that.moveChosen = false;
+                //SCORE LINES
+                that.moves[0].score += (that.moves[0].lines) * lineVar;
+                that.moves[1].score += (that.moves[1].lines) * lineVar;
 
-                //Get parameters for each move
-                for (i = 0; i < 1; i++) {
-                    that.solveHeightSmooth(i);
-                    that.solveHoles(i);
-                    that.solveLinesCleared(i);
+                //Compare Scores
+                if (that.moves[0].score >= that.moves[1].score) {
+                    that.moves.splice(1, 1);
+                }
+                else {
+                    that.moves.splice(0, 1);
+                }
 
-                    console.log('------------------------------');
-                    console.log('Height: ' + that.moves[i].height);
-                    console.log('Holes: ' + that.moves[i].holes);
-                    console.log('Smooth: ' + that.moves[i].smooth);
-                    console.log('Lines: ' + that.moves[i].lines);
-                    console.log('------------------------------');
-                    //Reset test grid to current game grid for next move testing
-                    //that.createGrid(that.curGrid, that.testGrid);
+                that.moves[0].score = 0;
+
+                //Check to see if best move has been chosen
+                if (that.moves.length === 1) {
+                    that.moveChosen = true;
                 }
             }
+        };
 
-            //if(that.moveChosen === false){
+        that.scoreGrid = function (gameGrid) {
+            that.createGrid(gameGrid, that.testGrid);
 
-                
+            that.moves.push({ height: undefined, holes: undefined, smooth: undefined, lines: undefined, score: 0, move: [] });
 
-                //Compare moves and keep the best move
-                //for(i = 0; i<39, i++){
-                  //  that.compareMoves(i, (i+1));
+            that.solveHeightSmooth();
+            that.solveHoles();
+            that.solveLinesCleared();
 
-                    //that.moveChosen = true;
-                //}
+        };
 
-            //}
-
-            //else {
-                
-             //   that.rotateBlock();
-             //   that.moveBlock();
-            //}
+        that.update = function () {
 
         };
 
