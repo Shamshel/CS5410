@@ -327,7 +327,7 @@ Assignment_4.engine = (function() {
 	    y: 0
 	    
 	},
-	timeInterval = 1000,
+	timeInterval = 500,
 	accumulatedTime = 0,
 	rotRight = false,
 	rotLeft = false,
@@ -397,8 +397,6 @@ Assignment_4.engine = (function() {
 		result = OutJTet();
 		
 	    }
-
-	    //result = InvSkewTet();
 	    
 	    return result;
 	    
@@ -537,241 +535,186 @@ Assignment_4.engine = (function() {
 	}
 	
 	function dropBlock(x, y){
-	    //DFS
-	    //console.log("dropping ("+x+", "+y+")");
-	    that.grid[y][x].touched = 1;
+	    cleanGrid();
+	    var blockStack = DFSStack(x, y);
+	    var point;
 
-	    if(that.grid[y+1][x] == undefined){
-		//drop this block
-		that.grid[y + 1][x] = that.grid[y][x];
-		that.grid[y][x] = undefined;
-		
-		if(that.grid[y+1][x].bind.right == true && x+1 < that.gridWidth){
-		    if(that.grid[y][x+1] != undefined && that.grid[y][x+1].touched != 1){
-			dropBlock(x+1, y);
-			
+	    while(blockStack.length > 0){
+		point = blockStack.pop();
+
+		//delay drop
+		if(that.grid[point.y+1][point.x] != undefined){
+		    if(that.grid[point.y][point.x].bind.down == true){
+			blockStack.unshift(point);
+
 		    }
-		    
+
 		}
-		
-		if(that.grid[y+1][x].bind.left == true && x-1 >= 0){
-		    if(that.grid[y][x-1] != undefined && that.grid[y][x-1].touched != 1){
-			dropBlock(x-1, y);
-			
-		    }
-		    
-		}			
-		
-		if(that.grid[y+1][x].bind.up == true && y-1 >= 0){
-		    if(that.grid[y-1][x] != undefined && that.grid[y-1][x].touched != 1){
-			dropBlock(x, y-1);
-			
-		    }
-		    
+
+		else{
+		    that.grid[point.y+1][point.x] = that.grid[point.y][point.x];
+		    that.grid[point.y][point.x] = undefined;
+
 		}
-		
+
+	    }
+
+	    cleanGrid();
+
+
+	}
+
+	function moveBlockLeft(x, y){
+	    cleanGrid();
+
+	    var blockStack = DFSStack(x, y);
+	    var point;
+
+	    while(blockStack.length > 0){
+		point = blockStack.pop();
+
+		//delay move
+		if(that.grid[point.y][point.x-1] != undefined){
+		    if(that.grid[point.y][point.x].bind.left == true){
+			blockStack.unshift(point);
+
+		    }
+
+		}
+
+		else{
+		    that.grid[point.y][point.x-1] = that.grid[point.y][point.x];
+		    that.grid[point.y][point.x] = undefined;
+
+		}
+
 	    }
 	    
-	    else{
-		if(that.grid[y][x].bind.down == true && y+1 < that.gridHeight){
-		    if(that.grid[y+1][x] != undefined && that.grid[y+1][x].touched != 1){
-			dropBlock(x, y+1);
-			
-		    }
-		    
-		}
-		
-		if(that.grid[y][x].bind.right == true && x+1 < that.gridWidth){
-		    if(that.grid[y][x+1] != undefined && that.grid[y][x+1].touched != 1){
-			dropBlock(x+1, y);
-			
-		    }
-		    
-		}
-		
-		if(that.grid[y][x].bind.left == true && x-1 >= 0){
-		    if(that.grid[y][x-1] != undefined && that.grid[y][x-1].touched != 1){
-			dropBlock(x-1, y);
-			
-		    }
-		    
-		}
-		
-		//drop this block
-		that.grid[y + 1][x] = that.grid[y][x];
-		that.grid[y][x] = undefined;
-		
-		
-		if(that.grid[y+1][x].bind.up == true && y-1 >= 0){
-		    if(that.grid[y-1][x] != undefined && that.grid[y-1][x].touched != 1){
-			dropBlock(x, y-1);
-			
-		    }
-		    
-		}
-		
-	    }
-	    
+	    cleanGrid();
+
 	}
 	
-	function moveBlockLeft(x, y) {
-	    //console.log("moving ("+x+", "+y+") left");
-	    that.grid[y][x].touched = 1;
-	    
-	    if(that.grid[y][x-1] == undefined){
-		that.grid[y][x-1] = that.grid[y][x];
-		that.grid[y][x] = undefined;
-		
-		if(that.grid[y][x-1].bind.down == true && y+1 < that.gridHeight){
-		    if(that.grid[y+1][x] != undefined && that.grid[y+1][x].touched != 1){
-			moveBlockLeft(x, y+1);
-			
+	function moveBlockRight(x, y){
+	    cleanGrid();
+	    var blockStack = DFSStack(x, y);
+	    var point;
+
+	    while(blockStack.length > 0){
+		point = blockStack.pop();
+
+		//delay move
+		if(that.grid[point.y][point.x+1] != undefined){
+		    if(that.grid[point.y][point.x].bind.right == true){
+			blockStack.unshift(point);
+
 		    }
-		    
+
 		}
-		
-		if(that.grid[y][x-1].bind.up == true && y-1 >= 0){
-		    if(that.grid[y-1][x] != undefined && that.grid[y-1][x].touched != 1){
-			moveBlockLeft(x, y-1);
-			
-		    }
-		    
+
+		else{
+		    that.grid[point.y][point.x+1] = that.grid[point.y][point.x];
+		    that.grid[point.y][point.x] = undefined;
+
 		}
-		
-		if(that.grid[y][x-1].bind.left == true && x-1 >= 0){
-		    if(that.grid[y][x-1] != undefined && that.grid[y][x-1].touched != 1){
-			moveBlockLeft(x-1, y);
-			
-		    }
-		    
-		}
-		
-		if(that.grid[y][x-1].bind.right == true && x+1 < that.gridWidth){
-		    if(that.grid[y][x+1] != undefined && that.grid[y][x+1].touched != 1){
-			moveBlockLeft(x+1, y);
-			
-		    }
-		    
-		}
-		
-	    }
-	    
-	    else{
-		if(that.grid[y][x].bind.down == true && y+1 < that.gridHeight){
-		    if(that.grid[y+1][x] != undefined && that.grid[y+1][x].touched != 1){
-			moveBlockLeft(x, y+1);
-			
-		    }
-		    
-		}
-		
-		if(that.grid[y][x].bind.up == true && y-1 >= 0){
-		    if(that.grid[y-1][x] != undefined && that.grid[y-1][x].touched != 1){
-			moveBlockLeft(x, y-1);
-			
-		    }
-		    
-		}
-		
-		if(that.grid[y][x].bind.left == true && x-1 >= 0){
-		    if(that.grid[y][x-1] != undefined && that.grid[y][x-1].touched != 1){
-			moveBlockLeft(x-1, y);
-			
-		    }
-		    
-		}
-		
-		//move this block
-		that.grid[y][x-1] = that.grid[y][x];
-		that.grid[y][x] = undefined;
-		
-		if(that.grid[y][x-1].bind.right == true && x+1 < that.gridWidth){
-		    if(that.grid[y][x+1] != undefined && that.grid[y][x+1].touched != 1){
-			moveBlockLeft(x+1, y);
-			
-		    }
-		    
-		}
-		
-	    }
-	    
+
+	    }	    
+
+	    cleanGrid();
+
 	}
-	
-	function moveBlockRight(x, y) {
-	    //console.log("moving ("+x+", "+y+") right");
-	    that.grid[y][x].touched = 1;
+
+	function detectRotateBlockLeftCollision(x, y) { 
+	    var startX = x;
+	    var startY = y;
+
+	    var moved;
+	    var thisX = startX;
+	    var thisY = startY;
 	    
-	    if(that.grid[y][x+1] == undefined){
-		that.grid[y][x+1] = that.grid[y][x];
-		that.grid[y][x] = undefined;
-		
-		if(that.grid[y][x+1].bind.down == true && y+1 < that.gridHeight){
-		    if(that.grid[y+1][x] != undefined && that.grid[y+1][x].touched != 1){
-			moveBlockRight(x, y+1);
-			
+	    var completeBlockStack = DFSStack(x, y);
+	    var collision = false;
+
+	    var point = undefined;
+
+	    var binding = undefined;
+
+	    var deltaX = 0;
+	    var deltaY = 0;
+
+	    var done = false;
+	    var i;
+
+	    cleanGrid();
+
+	    while(completeBlockStack.length > 0 && !collision){
+		point = completeBlockStack.pop();
+
+		deltaX = startX - point.x;
+		deltaY = point.y - startY;
+
+		if(that.grid[point.y][point.x].touched == 1){
+		    done = true;
+
+		    for(i = 0; i < completeBlockStack.length; i++){
+			if(that.grid[completeBlockStack[i].y][completeBlockStack[i].x].touched == 0){
+			    done = false;
+			    break;
+
+			}
+
 		    }
-		    
-		}
-		
-		if(that.grid[y][x+1].bind.up == true && y-1 >= 0){
-		    if(that.grid[y-1][x] != undefined && that.grid[y-1][x].touched != 1){
-			moveBlockRight(x, y-1);
-			
+
+		    if(done == true){
+			//console.log("no collision detected!");
+			cleanGrid();
+			return false;
+
 		    }
-		    
+
 		}
-		
-		if(that.grid[y][x+1].bind.left == true && x-1 >= 0){
-		    if(that.grid[y][x-1] != undefined && that.grid[y][x-1].touched != 1){
-			moveBlockRight(x-1, y);
-			
+
+		//check grid boundries
+		else if(startY+deltaX >= that.gridHeight || startY+deltaX < 0 || startX+deltaY >= that.gridWidth || startX+deltaY < 0){
+		    //console.log("edge collision detected!");
+		    cleanGrid();
+		    return true;
+
+		}
+
+		//grid point occupied
+		else if(point.x != startX+deltaY && point.y != startY+deltaX && that.grid[startY+deltaX][startX+deltaY] != undefined){
+		    collision = true;
+
+		    //check if point is in the array
+		    for(i = 0; i < completeBlockStack.length; i++){
+			if(startX+deltaY == completeBlockStack[i].x && startY+deltaX == completeBlockStack[i].y){
+			    //move the other blocks first
+			    collision = false;
+			    break;
+
+			}
+
 		    }
-		    
+
+		    if(collision == true){
+			//console.log("block collision detected!");
+			cleanGrid();
+			return true;
+
+		    }
+
 		}
+
+		that.grid[point.y][point.x].touched = 1;
+		completeBlockStack.unshift(point);
 		
 	    }
-	    
-	    else{
-		if(that.grid[y][x].bind.down == true && y+1 < that.gridHeight){
-		    if(that.grid[y+1][x] != undefined && that.grid[y+1][x].touched != 1){
-			moveBlockRight(x, y+1);
-			
-		    }
-		    
-		}
-		
-		if(that.grid[y][x].bind.up == true && y-1 >= 0){
-		    if(that.grid[y-1][x] != undefined && that.grid[y-1][x].touched != 1){
-			moveBlockRight(x, y-1);
-			
-		    }
-		    
-		}
-		
-		if(that.grid[y][x].bind.right == true && x+1 < that.gridWidth){
-		    if(that.grid[y][x+1] != undefined && that.grid[y][x+1].touched != 1){
-			moveBlockRight(x+1, y);
-			
-		    }
-		    
-		}
-		
-		//move this block
-		that.grid[y][x+1] = that.grid[y][x];
-		that.grid[y][x] = undefined;
-		
-		if(that.grid[y][x+1].bind.left == true && x-1 >= 0){
-		    if(that.grid[y][x-1] != undefined && that.grid[y][x-1].touched != 1){
-			moveBlockRight(x-1, y);
-			
-		    }
-		    
-		}
-		
-	    }
-	    
+
+	    cleanGrid();
+	    return false;
+
 	}
-	
+
 	function rotateBlockLeft(x, y) {
 	    //console.log("rotating ["+y+", "+x+"] left");
  
@@ -825,7 +768,6 @@ Assignment_4.engine = (function() {
 		    collision = true;
 
 		    //check if point is in the array
-		    var i;
 		    for(i = 0; i < completeBlockStack.length; i++){
 			if(startX+deltaY == completeBlockStack[i].x && startY+deltaX == completeBlockStack[i].y){
 			    //console.log("move from ["+point.y+", "+point.x+"] to ["+(startY+deltaX)+", "+(startX+deltaY)+"] delayed");
@@ -915,10 +857,104 @@ Assignment_4.engine = (function() {
 		
 	    }
 
+	    cleanGrid();
+
+	}
+
+	function detectRotateBlockRightCollision(x, y) {
+	    	    var startX = x;
+	    var startY = y;
+
+	    var moved;
+	    var thisX = startX;
+	    var thisY = startY;
+	    
+	    var completeBlockStack = DFSStack(x, y);
+	    var collision = false;
+
+	    var point = undefined;
+
+	    var binding = undefined;
+
+	    var deltaX = 0;
+	    var deltaY = 0;
+
+	    var done = false;
+	    var i;
+
+	    cleanGrid();
+
+	    while(completeBlockStack.length > 0 && !collision){
+		point = completeBlockStack.pop();
+
+		deltaX = point.x - startX;
+		deltaY = startY - point.y;
+
+		if(that.grid[point.y][point.x].touched == 1){
+		    done = true;
+
+		    for(i = 0; i < completeBlockStack.length; i++){
+			if(that.grid[completeBlockStack[i].y][completeBlockStack[i].x].touched == 0){
+			    done = false;
+			    break;
+
+			}
+
+		    }
+
+		    if(done == true){
+			//console.log("no collision detected!");
+			cleanGrid();
+			return false;
+
+		    }
+
+		}
+
+		//check grid boundries
+		else if(startY+deltaX >= that.gridHeight || startY+deltaX < 0 || startX+deltaY >= that.gridWidth || startX+deltaY < 0){
+		    //console.log("edge collision detected!");
+		    cleanGrid();
+		    return true;
+
+		}
+
+		//grid point occupied
+		else if(point.x != startX+deltaY && point.y != startY+deltaX && that.grid[startY+deltaX][startX+deltaY] != undefined){
+		    collision = true;
+
+		    //check if point is in the array
+		    for(i = 0; i < completeBlockStack.length; i++){
+			if(startX+deltaY == completeBlockStack[i].x && startY+deltaX == completeBlockStack[i].y){
+			    //move the other blocks first
+			    collision = false;
+			    break;
+
+			}
+
+		    }
+
+		    if(collision == true){
+			//console.log("block collision detected!");
+			cleanGrid();
+			return true;
+
+		    }
+
+		}
+
+		that.grid[point.y][point.x].touched = 1;
+		completeBlockStack.unshift(point);
+		
+	    }
+
+	    cleanGrid();
+	    return false;
+
 	}
 
 	function rotateBlockRight(x, y) {
-	    console.log("rotating ["+y+", "+x+"] right");
+//	    console.log("rotating ["+y+", "+x+"] right");
  
 	    var startX = x;
 	    var startY = y;
@@ -941,41 +977,28 @@ Assignment_4.engine = (function() {
 
 	    var i;
 
-	    for(i = 0; i < completeBlockStack.length; i++){
-		//console.log("point "+i+": ["+completeBlockStack[i].y+", "+completeBlockStack[i].x+"]");
-		
-	    }
-
 	    cleanGrid();
 
 	    while(completeBlockStack.length > 0 && !collision){
-		//console.log("stack length: "+completeBlockStack.length);
 		point = completeBlockStack.pop();
 
 		deltaX = point.x - startX;
 		deltaY = startY - point.y;
 
-		//console.log("moving ["+deltaY+", "+deltaX+"]");
-
 		//check grid boundries
 		if(startY+deltaX >= that.gridHeight || startY+deltaX < 0 || startX+deltaY >= that.gridWidth || startX+deltaY < 0){
-		    //console.log("edge collision occured!");
 		    collision = true;
 
 		}
 
 		//grid point occupied
 		else if(point.x != startX+deltaY && point.y != startY+deltaX && that.grid[startY+deltaX][startX+deltaY] != undefined){
-		    //console.log("grid point occupied!");
 		    collision = true;
 
 		    //check if point is in the array
-		    var i;
 		    for(i = 0; i < completeBlockStack.length; i++){
 			if(startX+deltaY == completeBlockStack[i].x && startY+deltaX == completeBlockStack[i].y){
-			    //console.log("move from ["+point.y+", "+point.x+"] to ["+(startY+deltaX)+", "+(startX+deltaY)+"] delayed");
 			    //move the other blocks first
-			    //completeBlockStack.push(point);
 			    completeBlockStack.unshift(point);
 			    collision = false;
 			    break;
@@ -988,8 +1011,6 @@ Assignment_4.engine = (function() {
 
 		//grid point unoccupied and within bounds
 		else{
-		    //console.log("moving ["+point.y+", "+point.x+"] to ["+(startY+deltaX)+", "+(startX+deltaY)+"]");
-
 		    binding = that.grid[point.y][point.x].bind;
 
 /*		    console.log("bindings:");
@@ -999,7 +1020,6 @@ Assignment_4.engine = (function() {
 		    console.log("down: "+binding.down);
 */
 		    //spawn new block
-		    //!@#$! javascript object copy is not deep.
 		    if(that.grid[point.y][point.x].image == Assignment_4.images['media/blueBlock.png']){
 			that.grid[startY+deltaX][startX+deltaY] = BlueBlock();
 
@@ -1060,6 +1080,7 @@ Assignment_4.engine = (function() {
 		
 	    }
 
+	    cleanGrid();
 	    //console.log("right rotation complete.");
 
 	}
@@ -1084,6 +1105,8 @@ Assignment_4.engine = (function() {
 	    var blockStack = DFSStack(x, y);
 	    var i;
 
+	    cleanGrid();
+
 	    for(i = 0; i < blockStack.length; i++){
 		if(blockStack[i].x-1 < 0){
 		    return true;
@@ -1103,6 +1126,8 @@ Assignment_4.engine = (function() {
 	function detectRightMostEdgeCollision(x, y){
 	    var blockStack = DFSStack(x, y);
 	    var i;
+
+	    cleanGrid();
 
 	    for(i = 0; i < blockStack.length; i++){
 		if(blockStack[i].x+1 >= that.gridWidth){
@@ -1124,6 +1149,8 @@ Assignment_4.engine = (function() {
 	    var blockStack = DFSStack(x, y);
 	    var i;
 
+	    cleanGrid();
+
 	    for(i = 0; i < blockStack.length; i++){
 		//console.log("testing: "+blockStack[i].y);
 
@@ -1138,6 +1165,8 @@ Assignment_4.engine = (function() {
 		}
 
 	    }
+
+	    cleanGrid();
 
 	    return false;
 
@@ -1249,32 +1278,11 @@ Assignment_4.engine = (function() {
 		
 	    }
 	    
-	    //rotate
-	    if(rotRight == true && rotLeft == false){
-		cleanGrid();
-		rotateBlockRight(centerBlock.x, centerBlock.y);
-		cleanGrid();
-		
-		//Assignment_4.playSound('media/sounds/SFX_PieceRotateLR', 1.0);
-		
-	    }
-	    
-	    else if(rotLeft == true && rotRight == false){
-		cleanGrid();
-		rotateBlockLeft(centerBlock.x, centerBlock.y);
-		cleanGrid();		
-		
-		//Assignment_4.playSound('media/sounds/SFX_PieceRotateLR', 1.0);
-		
-	    }
-	    
 	    //move
 	    if(movRight == true && movLeft == false){
 		if(detectRightMostEdgeCollision(centerBlock.x, centerBlock.y) == false){
-		    cleanGrid();
 		    moveBlockRight(centerBlock.x, centerBlock.y);
 		    centerBlock.x = centerBlock.x+1;
-		    cleanGrid();
 
 		    //Assignment_4.playSound('media/sounds/SFX_PieceMoveLR', 1.0);
 		    
@@ -1284,23 +1292,40 @@ Assignment_4.engine = (function() {
 	    
 	    else if(movLeft == true && movRight == false){
 		if(detectLeftMostEdgeCollision(centerBlock.x, centerBlock.y) == false){
-		    cleanGrid();
 		    moveBlockLeft(centerBlock.x, centerBlock.y);
 		    centerBlock.x = centerBlock.x-1;
-		    cleanGrid();
 		    
 		    //Assignment_4.playSound('media/sounds/SFX_PieceMoveLR', 1.0);
 		}
 		
 	    }
 	    
+	    //rotate
+	    if(rotRight == true && rotLeft == false){
+		if(detectRotateBlockRightCollision(centerBlock.x, centerBlock.y) == false){
+		    rotateBlockRight(centerBlock.x, centerBlock.y);
+
+		}
+
+		//Assignment_4.playSound('media/sounds/SFX_PieceRotateLR', 1.0);
+		
+	    }
+	    
+	    else if(rotLeft == true && rotRight == false){
+		if(detectRotateBlockLeftCollision(centerBlock.x, centerBlock.y) == false){
+		    rotateBlockLeft(centerBlock.x, centerBlock.y);
+
+		}
+		
+		//Assignment_4.playSound('media/sounds/SFX_PieceRotateLR', 1.0);
+		
+	    }
+
 	    //drop
 	    if(softDrp == true && hardDrp == false){
 		if(detectLowestEdgeCollision(centerBlock.x, centerBlock.y) == false){
-		    cleanGrid();
 		    dropBlock(centerBlock.x, centerBlock.y);
 		    centerBlock.y = centerBlock.y+1;
-		    cleanGrid();
 		    
 		}
 
@@ -1317,10 +1342,8 @@ Assignment_4.engine = (function() {
 	    else if(hardDrp == true && softDrp == false){
 		while(centerBlock.dropped == false){
 		    if(detectLowestEdgeCollision(centerBlock.x, centerBlock.y) == false){
-			cleanGrid();
 			dropBlock(centerBlock.x, centerBlock.y);
 			centerBlock.y = centerBlock.y+1;
-			cleanGrid();
 			
 		    }
 		    
@@ -1348,111 +1371,96 @@ Assignment_4.engine = (function() {
 
 		//drop block by gravity				
 		if(detectLowestEdgeCollision(centerBlock.x, centerBlock.y) == false && centerBlock.dropped == false){
-		    cleanGrid();
 		    dropBlock(centerBlock.x, centerBlock.y);
 		    centerBlock.y = centerBlock.y+1;
-		    cleanGrid();
 		    
 		}
 		
 		else{
 		    centerBlock.dropped = true;
 		    //Assignment_4.playSound('media/sounds/SFX_PieceTouchDown', 1.0);
+
+		    //check for filled row
+		    for(i = 0; i < that.gridHeight; i++){
+			filled = true;
+
+			for(j = 0; j < that.gridWidth; j++){
+			    if(that.grid[i][j] == undefined){
+				filled = false;
+				break;
+				
+			    }
+
+			}
+
+			//clear filled row
+			if(filled == true){
+			    that.clearedRows++;
+
+			    for(j = 0; j < that.gridWidth; j++){
+				that.grid[i][j] = undefined;
+				if(i+1 < that.gridHeight){
+				    if(that.grid[i+1][j] != undefined){
+					that.grid[i+1][j].bind.up = false;
+
+				    }
+
+				}
+
+				if(i-1 > 0){
+				    if(that.grid[i-1][j] != undefined){
+					that.grid[i-1][j].bind.down = false;
+
+				    }
+
+				}
+
+			    }
+
+			    for(k = i-1; k > 0; k--){
+				for(l = 0; l < that.gridWidth; l++){
+				    if(that.grid[k][l] != undefined){
+					var currentBlock = {
+					    x: l,
+					    y: k,
+					    dropped: false
+
+					};
+
+					while(currentBlock.dropped == false){
+					    if(detectLowestEdgeCollision(currentBlock.x, currentBlock.y) == false){
+						//console.log("dropping ["+currentBlock.y+", "+currentBlock.x+"]");
+						dropBlock(currentBlock.x, currentBlock.y);
+						currentBlock.y = currentBlock.y+1;
+						
+					    }
+					    
+					    else{
+						currentBlock.dropped = true;
+						//console.log("block ["+currentBlock.y+", "+currentBlock.x+"]  dropped!");
+						Assignment_4.playSound('media/sounds/SFX_PieceTouchDown', 1.0);
+						
+					    }
+
+					}
+
+				    }
+
+				}
+
+			    }
+
+			    //scan from the bottom of the grid to detect chain reactions
+			    i = 0;
+
+			}
+
+		    }	    
 		    
 		}
 
-		//check for filled row
-		for(i = 0; i < that.gridHeight; i++){
-		    filled = true;
-
-		    for(j = 0; j < that.gridWidth; j++){
-			if(that.grid[i][j] == undefined){
-			    filled = false;
-			    break;
-			    
-			}
-
-		    }
-
-		    //clear filled row
-		    if(filled == true){
-			for(j = 0; j < that.gridWidth; j++){
-			    if(i+1 < that.gridHeight && that.grid[i+1][j] != undefined){
-				that.grid[i+1][j].bind.up = false;
-
-			    }
-
-			    if(i-1 > 0 && that.grid[i-1][j] != undefined){
-				that.grid[i-1][j].bind.down = false;
-
-			    }
-
-			    that.grid[i][j] = undefined;
-
-			}
-
-			that.clearedRows = that.clearedRows+1;
-			that.scoreSum += 100;
-
-			//Assignment_4.playSound('media/sounds/LineFilled', 1.0);
-			
-			//move down all above
-			for(l = 0; l < that.gridWidth; l++){
-			    if(that.grid[i-1][l] != undefined){
-				cleanGrid();
-				dropBlock(l, i-1);
-				cleanGrid();
-
-			    }
-
-			}
-			
-
-			/*
-			  for(k = i-1; k > 0; k--){
-			  for(l = 0; l < that.gridWidth; l++){
-			  if(that.grid[k][l] != undefined){
-			  var currentBlock = {
-			  x: l,
-			  y: k,
-			  dropped: false
-
-			  };
-			  var temp;
-
-			  while(currentBlock.dropped == false){
-			  if(detectLowestEdgeCollision(currentBlock.x, currentBlock.y) == false){
-			  cleanGrid();
-			  //console.log("dropping ["+currentBlock.y+", "+currentBlock.x+"]");
-			  dropBlock(currentBlock.x, currentBlock.y);
-			  currentBlock.y = currentBlock.y+1;
-			  cleanGrid();
-			  
-			  }
-			  
-			  else{
-			  currentBlock.dropped = true;
-			  console.log("block ["+currentBlock.y+", "+currentBlock.x+"]  dropped!");
-			  Assignment_4.playSound('media/sounds/SFX_PieceTouchDown', 1.0);
-			  
-			  }
-
-			  }
-
-			  }
-
-			  }
-
-			  }
-
-			*/
-
-		    }
-
-		}	    
-	    
 	    }
-		
+	    
 	}
 	
 	return that;
