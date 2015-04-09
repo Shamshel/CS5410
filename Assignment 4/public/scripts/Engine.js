@@ -312,7 +312,7 @@ Assignment_4.engine = (function(aI) {
 	    grid: [],
 	    gameOver: false,
 	    aiON: aiOnFlag,
-	    level: 1,
+	    level: 0,
 	    scoreSum: 0,
 	    nextBlock: undefined,
 	    gridWidth: 10,
@@ -331,8 +331,10 @@ Assignment_4.engine = (function(aI) {
 	    
 	},
 	timeInterval = 500,
+    timeIntLookup  = [500,450,410,360,330,290,280,260,250,240,230,230,230,225,225,225,220,220,220,215],
 	accumulatedTime = 0,
     aiCount = 0,
+    scoreCount = 0,
     moveIndex = 0,
     centerF = false,
 	rotRight = false,
@@ -2268,6 +2270,14 @@ Assignment_4.engine = (function(aI) {
 	        else if (that.gameAI.moves[0].move[0] === moveBlockRight) {
 	            centerBlock.x = centerBlock.x + 1;
 	        }
+	        else if (that.gameAI.moves[0].move[0] === rotateBlockRight) {
+	            Assignment_4.playSound('media/sounds/SFX_PieceRotateLR', 1.0, false);
+	        }
+	        else if (that.gameAI.moves[0].move[0] === rotateBlockLeft) {
+	            Assignment_4.playSound('media/sounds/SFX_PieceRotateLR', 1.0, false);
+	        }
+
+
 	        cleanGrid();
 
 	        //Remove Used Move
@@ -2285,7 +2295,8 @@ Assignment_4.engine = (function(aI) {
 		    moveBlockRight(centerBlock.x, centerBlock.y);
 		    centerBlock.x = centerBlock.x + 1;
 
-		    //Assignment_4.playSound('media/sounds/SFX_PieceMoveLR', 1.0);
+		    //Leave commented
+		    //Assignment_4.playSound('media/sounds/SFX_PieceMoveLR', 1.0,false);
 		    
 		}
 		
@@ -2296,7 +2307,8 @@ Assignment_4.engine = (function(aI) {
 		    moveBlockLeft(centerBlock.x, centerBlock.y);
 		    centerBlock.x = centerBlock.x - 1;
 		    
-		    //Assignment_4.playSound('media/sounds/SFX_PieceMoveLR', 1.0);
+		    //Leave commented
+		    //Assignment_4.playSound('media/sounds/SFX_PieceMoveLR', 1.0,false);
 		}
 		
 	    }
@@ -2308,7 +2320,7 @@ Assignment_4.engine = (function(aI) {
 
 		}
 
-		//Assignment_4.playSound('media/sounds/SFX_PieceRotateLR', 1.0);
+		Assignment_4.playSound('media/sounds/SFX_PieceRotateLR', 1.0,false);
 		
 	    }
 	    
@@ -2318,7 +2330,8 @@ Assignment_4.engine = (function(aI) {
 
 		}
 		
-		//Assignment_4.playSound('media/sounds/SFX_PieceRotateLR', 1.0);
+        
+	    Assignment_4.playSound('media/sounds/SFX_PieceRotateLR', 1.0,false);
 		
 	    }
 
@@ -2332,7 +2345,7 @@ Assignment_4.engine = (function(aI) {
 
 		else{
 		    centerBlock.dropped = true;
-		    //Assignment_4.playSound('media/sounds/SFX_PieceTouchDown', 1.0);
+		    Assignment_4.playSound('media/sounds/SFX_PieceTouchDown', 1.0,false);
 		
 		}
 		
@@ -2350,7 +2363,9 @@ Assignment_4.engine = (function(aI) {
 		    
 		    else{
 			centerBlock.dropped = true;
-			//Assignment_4.playSound('media/sounds/SFX_PieceHardDrop', 1.0);
+            
+            //Do not need this sound, leave commented
+		    //Assignment_4.playSound('media/sounds/SFX_PieceHardDrop', 1.0,false);
 			
 		    }
 
@@ -2368,101 +2383,144 @@ Assignment_4.engine = (function(aI) {
 	
 	    if(accumulatedTime >= timeInterval){
     
-		accumulatedTime = 0;
+		    accumulatedTime = 0;
 
-		//drop block by gravity				
-		if(detectLowestEdgeCollision(centerBlock.x, centerBlock.y) == false && centerBlock.dropped == false){
-		    dropBlock(centerBlock.x, centerBlock.y);
-		    centerBlock.y = centerBlock.y+1;
+		    //drop block by gravity				
+		    if(detectLowestEdgeCollision(centerBlock.x, centerBlock.y) == false && centerBlock.dropped == false){
+		        dropBlock(centerBlock.x, centerBlock.y);
+		        centerBlock.y = centerBlock.y+1;
 		    
-		}
+		    }
 		
-		else{
-		    centerBlock.dropped = true;
-		    //Assignment_4.playSound('media/sounds/SFX_PieceTouchDown', 1.0);
+		    else{
+		        centerBlock.dropped = true;
+		        Assignment_4.playSound('media/sounds/SFX_PieceTouchDown', 1.0,false);
 
-		    //check for filled row
-		    for(i = 0; i < that.gridHeight; i++){
-			filled = true;
+		        //check for filled row
+		        for(i = 0; i < that.gridHeight; i++){
+			        filled = true;
 
-			for(j = 0; j < that.gridWidth; j++){
-			    if(that.grid[i][j] == undefined){
-				filled = false;
-				break;
+			        for(j = 0; j < that.gridWidth; j++){
+			            if(that.grid[i][j] == undefined){
+				            filled = false;
+				            break;
 				
-			    }
+			            }
 
-			}
+			        }
 
-			//clear filled row
-			if(filled == true){
-			    that.clearedRows++;
+			        //clear filled row
+			        if(filled == true){
 
-			    for(j = 0; j < that.gridWidth; j++){
-				that.grid[i][j] = undefined;
-				if(i+1 < that.gridHeight){
-				    if(that.grid[i+1][j] != undefined){
-					that.grid[i+1][j].bind.up = false;
+			            //Add to row
+			            that.clearedRows++;
+			            Assignment_4.playSound('media/sounds/LineFilled', 1.0, false);
 
-				    }
+			            //Increase score count
+			            scoreCount++;
 
-				}
+			            //Update Level
+			            if ((that.clearedRows % 10) === 0 && that.clearedRows != 0) {
+			                that.level++;
 
-				if(i-1 > 0){
-				    if(that.grid[i-1][j] != undefined){
-					that.grid[i-1][j].bind.down = false;
+                            //Increase Speed 
+			                if (that.level <= 19) {
+			                    timeInterval = timeIntLookup[that.level];
+			                }
+			                else {
+			                    timeInterval = timeIntLookup[19];
+			                }
 
-				    }
+			            }
 
-				}
+			            for(j = 0; j < that.gridWidth; j++){
+				            that.grid[i][j] = undefined;
+				            if(i+1 < that.gridHeight){
+				                if(that.grid[i+1][j] != undefined){
+					                that.grid[i+1][j].bind.up = false;
 
-			    }
+				                }   
 
-			    for(k = i-1; k > 0; k--){
-				for(l = 0; l < that.gridWidth; l++){
-				    if(that.grid[k][l] != undefined){
-					var currentBlock = {
-					    x: l,
-					    y: k,
-					    dropped: false
+				            }   
 
-					};
+				            if(i-1 > 0){
+				                if(that.grid[i-1][j] != undefined){
+					                that.grid[i-1][j].bind.down = false;
 
-					while(currentBlock.dropped == false){
-					    if(detectLowestEdgeCollision(currentBlock.x, currentBlock.y) == false){
-						//console.log("dropping ["+currentBlock.y+", "+currentBlock.x+"]");
-						dropBlock(currentBlock.x, currentBlock.y);
-						currentBlock.y = currentBlock.y+1;
+				                }
+
+				            }   
+
+			            }
+
+			            for(k = i-1; k > 0; k--){
+				            for(l = 0; l < that.gridWidth; l++){
+				                if(that.grid[k][l] != undefined){
+					                var currentBlock = {
+					                    x: l,
+					                    y: k,
+					                    dropped: false
+
+					                };
+
+					                while(currentBlock.dropped == false){
+					                    if(detectLowestEdgeCollision(currentBlock.x, currentBlock.y) == false){
+						                    //console.log("dropping ["+currentBlock.y+", "+currentBlock.x+"]");
+						                    dropBlock(currentBlock.x, currentBlock.y);
+						                    currentBlock.y = currentBlock.y+1;
 						
-					    }
+					                    }
 					    
-					    else{
-						currentBlock.dropped = true;
-						//console.log("block ["+currentBlock.y+", "+currentBlock.x+"]  dropped!");
-						Assignment_4.playSound('media/sounds/SFX_PieceTouchDown', 1.0);
+					                    else{
+						                    currentBlock.dropped = true;
+						                    //console.log("block ["+currentBlock.y+", "+currentBlock.x+"]  dropped!");
+						                    Assignment_4.playSound('media/sounds/SFX_PieceTouchDown', 1.0,false);
 						
-					    }
+					                    }
 
-					}
+					                }
 
-				    }
+				                }
 
-				}
+				            }
 
-			    }
+			            }
 
-			    //scan from the bottom of the grid to detect chain reactions
-			    i = 0;
+			            //scan from the bottom of the grid to detect chain reactions
+			            i = 0;
 
-			}
+			        }
 
-		    }	    
+		        }	    
 		    
-		}
+		    } //END OF "check for filled row"
 
-	    }
+
+	        //ADD TO TOTAL SCORE
+            //One Lines Cleared
+		    if (scoreCount === 1) {
+		        that.scoreSum += 40 * (that.level + 1);
+		    }
+		    //Two Lines Cleared
+		    else if (scoreCount === 2) {
+		        that.scoreSum += 100 * (that.level + 1);
+		    }
+		    //Three Lines Cleared
+		    else if (scoreCount === 3) {
+		        that.scoreSum += 300 * (that.level + 1);
+		    }
+		    //Four Lines Cleared
+		    else if (scoreCount >= 4) {
+		        that.scoreSum += 1200 * (that.level + 1);
+		    }
+
+            //Reset Score Count
+		    scoreCount = 0;
+		    
+
+	    } //END OF "if(accumulatedTime >= timeInterval)"
 	    
-	}
+	} //END OF "that.update"
 	
 	return that;
 	
