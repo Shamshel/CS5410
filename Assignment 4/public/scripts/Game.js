@@ -408,8 +408,8 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 				context.translate(gameFrame.border.x+(that.gridPxWidth*pos.x), gameFrame.border.y+(that.gridPxHeight*pos.y));
 				context.rotate(pos.rotation);
 
-				context.drawImage(particle.image, -1*(particle.size.width/2)*particle.scale, -1*(particle.size.height/2)*particle.scale, particle.size.width*particle.scale, particle.size.height*particle.scale);
-				//context.drawImage(particle.image, 0, 0, particle.size.width*particle.scale, particle.size.height*particle.scale);
+				//context.drawImage(particle.image, -1*(particle.size.width/2)*particle.scale, -1*(particle.size.height/2)*(particle.scale-0.4), particle.size.width*particle.scale, particle.size.height*particle.scale);
+				context.drawImage(particle.image, -1*that.gridPxWidth/2, 0, that.gridPxWidth, that.gridPxHeight);
 
 
 /*				context.rotate(pos.rotation);

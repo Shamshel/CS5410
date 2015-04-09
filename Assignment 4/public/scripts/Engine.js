@@ -339,11 +339,17 @@ Assignment_4.engine = (function(aI, particles) {
 	moveIndex = 0,
 	centerF = false,
 	rotRight = false,
+	rotRightServiced = false,
 	rotLeft = false,
+	rotLeftServiced = false,
 	movRight = false,
+	movRightServiced = false,
 	movLeft = false,
+	movLeftServiced = false,
 	softDrp = false,
-	hardDrp = false;
+	softDrpServiced = false,
+	hardDrp = false,
+	hardDrpServiced = false;
 	
 	var i,
 	j;
@@ -1211,6 +1217,148 @@ Assignment_4.engine = (function(aI, particles) {
 	    }
 	}
 
+	function gravity() {
+	    var filled;
+	    var i,
+	    j,
+	    k,
+	    l;
+
+	    //check for filled row
+	    for(i = 0; i < that.gridHeight; i++){
+		filled = true;
+
+		for(j = 0; j < that.gridWidth; j++){
+		    if(that.grid[i][j] == undefined){
+			filled = false;
+			break;
+			
+		    }
+
+		}
+
+		//clear filled row
+		if(filled == true){
+
+		    //Add to row
+		    that.clearedRows++;
+		    Assignment_4.playSound('media/sounds/LineFilled', 1.0, false);
+
+		    //Increase score count
+		    scoreCount++;
+
+		    //Update Level
+		    if ((that.clearedRows % 10) === 0 && that.clearedRows != 0) {
+			that.level++;
+
+                        //Increase Speed 
+			if (that.level <= 19) {
+			    timeInterval = timeIntLookup[that.level];
+			}
+			else {
+			    timeInterval = timeIntLookup[19];
+			}
+
+		    }
+
+		    for(j = 0; j < that.gridWidth; j++){
+			//spawn particle on deleted block
+			var pos = particles.Position();
+			pos.x = j;
+			pos.y = i;
+			pos.vector.x = 0;
+			pos.vector.y = 0;
+			
+			
+			that.particles.push(particles.SmokeParticle());
+			
+			that.particles[that.particles.length-1].makeEmitter(pos, 500);
+
+			//delete block
+			that.grid[i][j] = undefined;
+
+			if(i+1 < that.gridHeight){
+			    if(that.grid[i+1][j] != undefined){
+				that.grid[i+1][j].bind.up = false;
+
+			    }   
+
+			}   
+
+			if(i-1 > 0){
+			    if(that.grid[i-1][j] != undefined){
+				that.grid[i-1][j].bind.down = false;
+
+			    }
+
+			}   
+
+		    }
+
+		    for(k = i-1; k > 0; k--){
+			for(l = 0; l < that.gridWidth; l++){
+			    if(that.grid[k][l] != undefined){
+				var currentBlock = {
+				    x: l,
+				    y: k,
+				    dropped: false
+
+				};
+
+				while(currentBlock.dropped == false){
+				    if(detectLowestEdgeCollision(currentBlock.x, currentBlock.y) == false){
+					//console.log("dropping ["+currentBlock.y+", "+currentBlock.x+"]");
+					dropBlock(currentBlock.x, currentBlock.y);
+					currentBlock.y = currentBlock.y+1;
+					
+				    }
+				    
+				    else{
+					currentBlock.dropped = true;
+					//console.log("block ["+currentBlock.y+", "+currentBlock.x+"]  dropped!");
+					Assignment_4.playSound('media/sounds/SFX_PieceTouchDown', 1.0,false);
+					
+				    }
+
+				}
+
+			    }
+
+			}
+
+		    }
+
+		    //scan from the bottom of the grid to detect chain reactions
+		    i = 0;
+
+		}
+
+		//ADD TO TOTAL SCORE
+		//One Lines Cleared
+		if (scoreCount === 1) {
+		    that.scoreSum += 40 * (that.level + 1);
+		}
+		//Two Lines Cleared
+		else if (scoreCount === 2) {
+		    that.scoreSum += 100 * (that.level + 1);
+		}
+		//Three Lines Cleared
+		else if (scoreCount === 3) {
+		    that.scoreSum += 300 * (that.level + 1);
+		}
+		//Four Lines Cleared
+		else if (scoreCount >= 4) {
+		    that.scoreSum += 1200 * (that.level + 1);
+		}
+
+		//Reset Score Count
+		scoreCount = 0;
+		
+
+	    } //END OF "if(accumulatedTime >= timeInterval)"
+
+	}
+
 	//user controls
 	that.rotateRight = function(elapsedTime) {
 	    //console.log("rotate right!");
@@ -1255,7 +1403,7 @@ Assignment_4.engine = (function(aI, particles) {
 	    //spawn particles at location of emitter particles
 	    for(i = that.particles.length-1; i >= 0; i--){
 		if(that.particles[i].getEmitter()){
-		    var result = that.particles[i].spawnParticles(1, 500);
+		    var result = that.particles[i].spawnParticles(1, 100);
 		    that.particles = that.particles.concat(result);
 		    
 		}
@@ -1284,11 +1432,74 @@ Assignment_4.engine = (function(aI, particles) {
 		
 	    }
 
-	    if(accumulatedTime < timeInterval){
+	    //rotation guards
+	    if(rotRight == false){
+		rotRightServiced = false;
+
+	    }
+
+	    else if(rotRightServiced == true){
+		rotRight = false;
+
+	    }
+
+	    if(rotLeft == false){
+		rotLeftServiced = false;
+
+	    }
+
+	    else if(rotLeftServiced == true){
+		rotLeft = false;
+
+	    }
+
+	    //drop guards
+	    if(softDrp == false){
+		softDrpServiced = false;
+
+	    }
+
+	    else if(softDrpServiced == true){
+		softDrp = false;
+
+	    }
+
+	    if(hardDrp == false){
+		hardDrpServiced = false;
+
+	    }
+
+	    else if(hardDrpServiced == true){
+		hardDrp = false;
+
+	    }
+
+	    //movement guards
+	    if(movLeft == false){
+		movLeftServiced = false;
+
+	    }
+
+	    else if(movLeftServiced == true){
+		movLeft = false;
+
+	    }
+
+	    if(movRight == false){
+		movRightServiced = false;
+
+	    }
+
+	    else if(movRightServiced == true){
+		movRight = false;
+
+	    }
+
+	    if(accumulatedTime < timeInterval/4){
 		return;
 		
 	    }
-	    
+
 	    //check if block has dropped and copy in a new one
 	    if(centerBlock.dropped == true){
 		    var newBlock = undefined;
@@ -1296,8 +1507,6 @@ Assignment_4.engine = (function(aI, particles) {
 		    var j;
 		    var k;
 		    var l;
-
-		    var filled;
 		
 		    if(blockStack.length == 0){
 			    blockStack.push(spawnBlock());
@@ -2290,7 +2499,7 @@ Assignment_4.engine = (function(aI, particles) {
 		
 	    }
 
-	    if (that.aiON === true) {
+	    if (that.aiON === true && accumulatedTime >= timeInterval) {
 	        //--------------------------------------------------------------
 	        //     If AI MODE, AI Will Choose Moves
 	        //--------------------------------------------------------------
@@ -2333,6 +2542,8 @@ Assignment_4.engine = (function(aI, particles) {
 		    //Assignment_4.playSound('media/sounds/SFX_PieceMoveLR', 1.0,false);
 		    
 		}
+
+		movRightServiced = true;
 		
 	    }
 	    
@@ -2344,6 +2555,8 @@ Assignment_4.engine = (function(aI, particles) {
 		    //Leave commented
 		    //Assignment_4.playSound('media/sounds/SFX_PieceMoveLR', 1.0,false);
 		}
+
+		movLeftServiced = true;
 		
 	    }
 	    
@@ -2354,6 +2567,7 @@ Assignment_4.engine = (function(aI, particles) {
 
 		}
 
+		rotRightServiced = true;
 		Assignment_4.playSound('media/sounds/SFX_PieceRotateLR', 1.0,false);
 		
 	    }
@@ -2364,8 +2578,8 @@ Assignment_4.engine = (function(aI, particles) {
 
 		}
 		
-        
-	    Assignment_4.playSound('media/sounds/SFX_PieceRotateLR', 1.0,false);
+		rotLeftServiced = true;
+		Assignment_4.playSound('media/sounds/SFX_PieceRotateLR', 1.0,false);
 		
 	    }
 
@@ -2374,7 +2588,7 @@ Assignment_4.engine = (function(aI, particles) {
 		if(detectLowestEdgeCollision(centerBlock.x, centerBlock.y) == false){
 		    dropBlock(centerBlock.x, centerBlock.y);
 		    centerBlock.y = centerBlock.y+1;
-		    
+
 		}
 
 		else{
@@ -2382,6 +2596,10 @@ Assignment_4.engine = (function(aI, particles) {
 		    Assignment_4.playSound('media/sounds/SFX_PieceTouchDown', 1.0,false);
 		
 		}
+
+		gravity();
+
+		softDrpServiced = true;
 		
 	    }
 
@@ -2397,6 +2615,8 @@ Assignment_4.engine = (function(aI, particles) {
 		    
 		    else{
 			centerBlock.dropped = true;
+
+			gravity();
             
             //Do not need this sound, leave commented
 		    //Assignment_4.playSound('media/sounds/SFX_PieceHardDrop', 1.0,false);
@@ -2404,7 +2624,9 @@ Assignment_4.engine = (function(aI, particles) {
 		    }
 
 		}
-		
+
+		hardDrpServiced = true;
+
 	    }
 	    
 	    //reset user inputs
@@ -2430,143 +2652,11 @@ Assignment_4.engine = (function(aI, particles) {
 		        centerBlock.dropped = true;
 		        Assignment_4.playSound('media/sounds/SFX_PieceTouchDown', 1.0,false);
 
-		        //check for filled row
-		        for(i = 0; i < that.gridHeight; i++){
-			        filled = true;
+		        gravity();
 
-			        for(j = 0; j < that.gridWidth; j++){
-			            if(that.grid[i][j] == undefined){
-				            filled = false;
-				            break;
-				
-			            }
-
-			        }
-
-			        //clear filled row
-			        if(filled == true){
-
-			            //Add to row
-			            that.clearedRows++;
-			            Assignment_4.playSound('media/sounds/LineFilled', 1.0, false);
-
-			            //Increase score count
-			            scoreCount++;
-
-			            //Update Level
-			            if ((that.clearedRows % 10) === 0 && that.clearedRows != 0) {
-			                that.level++;
-
-                            //Increase Speed 
-			                if (that.level <= 19) {
-			                    timeInterval = timeIntLookup[that.level];
-			                }
-			                else {
-			                    timeInterval = timeIntLookup[19];
-			                }
-
-			            }
-
-			            for(j = 0; j < that.gridWidth; j++){
-				//spawn particle on deleted block
-				var pos = particles.Position();
-				pos.x = j;
-				pos.y = i;
-				pos.vector.x = 0;
-				pos.vector.y = 0;
-			
-			
-				that.particles.push(particles.SmokeParticle());
-			
-				that.particles[that.particles.length-1].makeEmitter(pos, 1000);
-
-				//delete block
-				            that.grid[i][j] = undefined;
-
-				            if(i+1 < that.gridHeight){
-				                if(that.grid[i+1][j] != undefined){
-					                that.grid[i+1][j].bind.up = false;
-
-				                }   
-
-				            }   
-
-				            if(i-1 > 0){
-				                if(that.grid[i-1][j] != undefined){
-					                that.grid[i-1][j].bind.down = false;
-
-				                }
-
-				            }   
-
-			            }
-
-			            for(k = i-1; k > 0; k--){
-				            for(l = 0; l < that.gridWidth; l++){
-				                if(that.grid[k][l] != undefined){
-					                var currentBlock = {
-					                    x: l,
-					                    y: k,
-					                    dropped: false
-
-					                };
-
-					                while(currentBlock.dropped == false){
-					                    if(detectLowestEdgeCollision(currentBlock.x, currentBlock.y) == false){
-						                    //console.log("dropping ["+currentBlock.y+", "+currentBlock.x+"]");
-						                    dropBlock(currentBlock.x, currentBlock.y);
-						                    currentBlock.y = currentBlock.y+1;
-						
-					                    }
-					    
-					                    else{
-						                    currentBlock.dropped = true;
-						                    //console.log("block ["+currentBlock.y+", "+currentBlock.x+"]  dropped!");
-						                    Assignment_4.playSound('media/sounds/SFX_PieceTouchDown', 1.0,false);
-						
-					                    }
-
-					                }
-
-				                }
-
-				            }
-
-			            }
-
-			            //scan from the bottom of the grid to detect chain reactions
-			            i = 0;
-
-			        }
-
-		        }	    
+		    }	    
 		    
-		    } //END OF "check for filled row"
-
-
-	        //ADD TO TOTAL SCORE
-            //One Lines Cleared
-		    if (scoreCount === 1) {
-		        that.scoreSum += 40 * (that.level + 1);
-		    }
-		    //Two Lines Cleared
-		    else if (scoreCount === 2) {
-		        that.scoreSum += 100 * (that.level + 1);
-		    }
-		    //Three Lines Cleared
-		    else if (scoreCount === 3) {
-		        that.scoreSum += 300 * (that.level + 1);
-		    }
-		    //Four Lines Cleared
-		    else if (scoreCount >= 4) {
-		        that.scoreSum += 1200 * (that.level + 1);
-		    }
-
-            //Reset Score Count
-		    scoreCount = 0;
-		    
-
-	    } //END OF "if(accumulatedTime >= timeInterval)"
+	    }
 	    
 	} //END OF "that.update"
 	
