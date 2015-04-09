@@ -289,7 +289,7 @@ Assignment_4.particles = (function() {
     //Smoke Particle object class
     function SmokeParticle(){
 	var that = {
-	    image : Assignment_4.images['media/smoke.png'],
+	    image : Assignment_4.images['media/bsmoke.png'],
 	    size : {
 		width : 83,
 		height : 75

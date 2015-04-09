@@ -55,9 +55,9 @@ exports.add = function (request, response) {
         i;
 
     for (i = 0; i < scores.length; i++) {
-        if (currentScore >= scores[i].score) {
-            tempHS = scores[i].score;
-            scores[i].score = currentScore;
+        if (currentScore >= parseInt(scores[i].score)) {
+            tempHS = parseInt(scores[i].score);
+            scores[i].score = parseInt(currentScore);
             currentScore = tempHS;
         }
     }
