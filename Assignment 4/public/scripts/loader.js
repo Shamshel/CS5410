@@ -45,6 +45,8 @@ window.addEventListener('load', function() {
 				'preload!media/redBlock.png',
 				'preload!media/yellowBlock.png',
                 'preload!media/gridBlock.png',
+			    'preload!media/smoke.png',
+			    'preload!media/fire.png',
                 'preload!scripts/soundPlayer.js',
 				'preload!media/sounds/arcadeSound.' + Assignment_4.audioExt,
                 'preload!media/sounds/plopp.' + Assignment_4.audioExt,
@@ -61,6 +63,7 @@ window.addEventListener('load', function() {
 				'preload!scripts/Input.js',
 				'preload!scripts/Frame.js',
 				'preload!scripts/solverAI.js',
+			    'preload!scripts/Particles.js',
 				'preload!scripts/Engine.js',
 				'preload!scripts/Game.js',
 				'preload!scripts/Assignment_4.js'
@@ -115,3 +118,4 @@ yepnope.addPrefix('preload', function(resource) {
 	
 	return resource;
 });
+

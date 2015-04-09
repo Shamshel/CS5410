@@ -1,4 +1,4 @@
-Assignment_4.engine = (function(aI) {
+Assignment_4.engine = (function(aI, particles) {
     'use strict';
     
     console.log("initializing engine!");
@@ -319,7 +319,8 @@ Assignment_4.engine = (function(aI) {
 	    gridHeight: 22,
 	    clearedRows: 0,
 	    gameAI: aI.aiJarvis(),
-        saveGrid: []
+            saveGrid: [],
+	    particles: []
 	    
 	},
 	blockStack = [],
@@ -332,9 +333,9 @@ Assignment_4.engine = (function(aI) {
 	},
 	timeInterval = 500,
 	accumulatedTime = 0,
-    aiCount = 0,
-    moveIndex = 0,
-    centerF = false,
+	aiCount = 0,
+	moveIndex = 0,
+	centerF = false,
 	rotRight = false,
 	rotLeft = false,
 	movRight = false,
@@ -815,7 +816,6 @@ Assignment_4.engine = (function(aI) {
 		    console.log("down: "+binding.down);
 */
 		    //spawn new block
-		    //!@#$! javascript object copy is not deep.
 		    if(that.grid[point.y][point.x].image == Assignment_4.images['media/blueBlock.png']){
 			that.grid[startY+deltaX][startX+deltaY] = BlueBlock();
 
@@ -1249,12 +1249,43 @@ Assignment_4.engine = (function(aI) {
 	that.update = function(elapsedTime) {
 	    //console.log("updating at time "+elapsedTime);
 	    accumulatedTime += elapsedTime;
+
+	    //spawn particles at location of emitter particles
+	    for(i = that.particles.length-1; i >= 0; i--){
+		if(that.particles[i].getEmitter()){
+		    var result = that.particles[i].spawnParticles(1, 500);
+		    that.particles = that.particles.concat(result);
+		    
+		}
+		
+	    }
+	    
+	    //update particle positions
+	    for(i = 0; i < that.particles.length; i++){
+		//console.log("i: "+i);
+		if(that.particles != false){
+		    //console.log("particle "+i+" is "+that.particles[i]);
+		    //var pos = that.particles[i].getPosition();
+		    //console.log("particle "+i+" is at ["+pos.y+", "+pos.x+"]");
+		    that.particles[i].update(elapsedTime);
+		    
+		}
+		
+	    }
+	    
+	    //remove dead particles
+	    for(i = that.particles.length-1; i > -1; i--){
+		if(that.particles[i].getTTL() <= 0 && !that.particles[i].getImmortal()){
+		    that.particles.splice(i, 1);
+		    
+		}
+		
+	    }
+
 	    if(accumulatedTime < timeInterval){
 		return;
 		
 	    }
-	    
-	    //console.log("passed time interval!");
 	    
 	    //check if block has dropped and copy in a new one
 	    if(centerBlock.dropped == true){
@@ -1293,7 +1324,7 @@ Assignment_4.engine = (function(aI) {
 		    }
 
 	        //Save grid state before new block comes
-		    for (i = 0; i < that.gridHeight; i++) {
+		for (i = 0; i < that.gridHeight; i++) {
 		        for (j = 0; j < that.gridWidth; j++) {
 		            if (that.grid[i][j] == undefined) {
 		                that.saveGrid[i][j] = undefined;
@@ -1362,6 +1393,9 @@ Assignment_4.engine = (function(aI) {
 		                for (j = 0; j < that.gridWidth; j++) {
 		                    if (that.saveGrid[i][j] == undefined) {
 		                        that.grid[i][j] = undefined;
+					//spawn particle on this block
+					
+
 		                    }
 		                }
 		            }
@@ -2399,7 +2433,21 @@ Assignment_4.engine = (function(aI) {
 			    that.clearedRows++;
 
 			    for(j = 0; j < that.gridWidth; j++){
+				//spawn particle on deleted block
+				var pos = particles.Position();
+				pos.x = j;
+				pos.y = i;
+				pos.vector.x = 0;
+				pos.vector.y = 0;
+			
+			
+				that.particles.push(particles.SmokeParticle());
+			
+				that.particles[that.particles.length-1].makeEmitter(pos, 1000);
+
+				//delete block
 				that.grid[i][j] = undefined;
+
 				if(i+1 < that.gridHeight){
 				    if(that.grid[i+1][j] != undefined){
 					that.grid[i+1][j].bind.up = false;
@@ -2473,4 +2521,5 @@ Assignment_4.engine = (function(aI) {
 	
     };
     
-}(Assignment_4.sovlerAI));
+}(Assignment_4.sovlerAI, Assignment_4.particles));
+

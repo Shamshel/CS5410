@@ -328,7 +328,8 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 	    }
 			
 		var i,
-			j;
+			j,
+	    k;
 			
 		that.gridPxHeight = (gameFrame.border.height/that.gameEngine.gridHeight);
 		that.gridPxWidth = (gameFrame.border.width/that.gameEngine.gridWidth);
@@ -378,56 +379,83 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 	    }
 
 	    that.render = function (context) {
-			//console.log("rendering!");
-			context.save();
+		//console.log("rendering!");
+		context.save();
+		
+		for(i = 0; i < that.gameEngine.gridHeight; i++){
+		    for(j = 0; j < that.gameEngine.gridWidth; j++){
+			//console.log("testing at ("+i+", "+j+")");
 			
-			for(i = 0; i < that.gameEngine.gridHeight; i++){
-				for(j = 0; j < that.gameEngine.gridWidth; j++){
-					//console.log("testing at ("+i+", "+j+")");
-					
-				    if (that.gameEngine.grid[i][j] != undefined) {
-				        //console.log("drawing at x: "+gameFrame.border.x+(that.gridPxWidth*j)+" y: "+gameFrame.border.y+(that.gridPxHeight*i));
-				        //console.log("image src: "+that.gameEngine.grid[i][j].image);
-				        context.drawImage(that.gameEngine.grid[i][j].image, gameFrame.border.x + (that.gridPxWidth * j), gameFrame.border.y + (that.gridPxHeight * i), that.gridPxWidth, that.gridPxHeight);
+			if (that.gameEngine.grid[i][j] != undefined) {
+			    //console.log("drawing at x: "+gameFrame.border.x+(that.gridPxWidth*j)+" y: "+gameFrame.border.y+(that.gridPxHeight*i));
+			    //console.log("image src: "+that.gameEngine.grid[i][j].image);
+			    context.drawImage(that.gameEngine.grid[i][j].image, gameFrame.border.x + (that.gridPxWidth * j), gameFrame.border.y + (that.gridPxHeight * i), that.gridPxWidth, that.gridPxHeight);
 
-				    }
-				    else {
-				        context.drawImage(that.gridImage.image, gameFrame.border.x + (that.gridPxWidth * j), gameFrame.border.y + (that.gridPxHeight * i), that.gridPxWidth, that.gridPxHeight);
-				    }
-					
-				}
-				
-			}
-
-	        //Render Next Block
-			if (that.gameEngine.nextBlock != undefined) {
-			    for (i = 0; i < 2; i++) {
-			        for (j = 0; j < 4; j++) {
-			            if (that.gameEngine.nextBlock.grid[i][j] != undefined) {
-			                context.drawImage(that.gameEngine.nextBlock.grid[i][j].image, (that.nextbX + (that.nextbW / 3) + (that.gridPxWidth * j)), (that.nextbY + (that.nextbH / 3) + (that.gridPxHeight * i)), that.gridPxWidth, that.gridPxHeight);
-			            }
-			        }
-			    }
-			}
-		    
-	        //Render Time
-			context.font = '28px Arial';
-			context.textAlign = 'center';
-			context.fillStyle = 'lightblue';
-			if (that.gameSec < 10) {
-			    context.fillText(that.gameMin + ':0' + that.gameSec, (that.infoX + (that.infoW / 2)), (that.infoY + (that.infoH / 10)) + (that.infoH / 20) + ((that.infoH * (15 / 100)) / 1.5));
 			}
 			else {
-			    context.fillText(that.gameMin + ':' + that.gameSec, (that.infoX + (that.infoW / 2)), (that.infoY + (that.infoH / 10)) + (that.infoH / 20) + ((that.infoH * (15 / 100)) / 1.5));
+			    context.drawImage(that.gridImage.image, gameFrame.border.x + (that.gridPxWidth * j), gameFrame.border.y + (that.gridPxHeight * i), that.gridPxWidth, that.gridPxHeight);
 			}
 
+			for(k = 0; k < that.gameEngine.particles.length; k++){
+			    var pos = that.gameEngine.particles[k].getPosition();
+
+			    if(Math.floor(pos.x) == j && Math.floor(pos.y) == i){
+				var particle = that.gameEngine.particles[k];
+
+				context.save();
+
+				//context.translate(gameFrame.border.x+(that.gridPxWidth*j), gameFrame.border.y+(that.gridPxHeight*i));
+				context.translate(gameFrame.border.x+(that.gridPxWidth*pos.x), gameFrame.border.y+(that.gridPxHeight*pos.y));
+				context.rotate(pos.rotation);
+
+				context.drawImage(particle.image, -1*(particle.size.width/2)*particle.scale, -1*(particle.size.height/2)*particle.scale, particle.size.width*particle.scale, particle.size.height*particle.scale);
+				//context.drawImage(particle.image, 0, 0, particle.size.width*particle.scale, particle.size.height*particle.scale);
+
+
+/*				context.rotate(pos.rotation);
+
+				context.drawImage(particle.image, gameFrame.border.x+(that.gridPxWidth*particle.x), gameFrame.border.y+(that.gridPxHeight*particle.y), particle.size.width*particle.scale, particle.size.height*particle.scale);
+*/
+				context.restore();			    
+
+
+			    }
+
+			}
+			
+		    }
+		    
+		}
+
+	        //Render Next Block
+		if (that.gameEngine.nextBlock != undefined) {
+		    for (i = 0; i < 2; i++) {
+			for (j = 0; j < 4; j++) {
+			    if (that.gameEngine.nextBlock.grid[i][j] != undefined) {
+			        context.drawImage(that.gameEngine.nextBlock.grid[i][j].image, (that.nextbX + (that.nextbW / 3) + (that.gridPxWidth * j)), (that.nextbY + (that.nextbH / 3) + (that.gridPxHeight * i)), that.gridPxWidth, that.gridPxHeight);
+			    }
+			}
+		    }
+		}
+		
+	        //Render Time
+		context.font = '28px Arial';
+		context.textAlign = 'center';
+		context.fillStyle = 'lightblue';
+		if (that.gameSec < 10) {
+		    context.fillText(that.gameMin + ':0' + that.gameSec, (that.infoX + (that.infoW / 2)), (that.infoY + (that.infoH / 10)) + (that.infoH / 20) + ((that.infoH * (15 / 100)) / 1.5));
+		}
+		else {
+		    context.fillText(that.gameMin + ':' + that.gameSec, (that.infoX + (that.infoW / 2)), (that.infoY + (that.infoH / 10)) + (that.infoH / 20) + ((that.infoH * (15 / 100)) / 1.5));
+		}
+
 	        //Render Current Score
-			context.fillText(that.curScore, (that.infoX + (that.infoW / 2)), (that.infoY + (that.infoH / 2.5)) + (that.infoH / 20) + ((that.infoH * (15 / 100)) / 1.5));
+		context.fillText(that.curScore, (that.infoX + (that.infoW / 2)), (that.infoY + (that.infoH / 2.5)) + (that.infoH / 20) + ((that.infoH * (15 / 100)) / 1.5));
 
 	        //Render # of Lines
-			context.fillText(that.lines, (that.infoX + (that.infoW / 2)), (that.infoY + (2 * (that.infoH / 2.5))) - (that.infoH / 10) + (that.infoH / 20) + ((that.infoH * (15 / 100)) / 1.5));
+		context.fillText(that.lines, (that.infoX + (that.infoW / 2)), (that.infoY + (2 * (that.infoH / 2.5))) - (that.infoH / 10) + (that.infoH / 20) + ((that.infoH * (15 / 100)) / 1.5));
 
-			context.restore();
+		context.restore();
 		
 	    }
 
@@ -825,3 +853,4 @@ Assignment_4.game = (function(engine, menu, frame, input) {
 	};
 	
 }(Assignment_4.engine, Assignment_4.menu, Assignment_4.frame, Assignment_4.input));
+

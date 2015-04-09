@@ -1,5 +1,7 @@
-Assignment_4.engine = (function() {
+Assignment_4.particles = (function() {
     'use strict';
+
+    console.log("initializing particles!");
 
     //---------------------------------------------------
     //physics and rendering objects
@@ -71,8 +73,8 @@ Assignment_4.engine = (function() {
 	
 	that.random = function(maxVelocity, maxRotation){
 	    that.x = maxVelocity*Math.random();
-	    that.y = maxVelocity*Math.random();
-	    that.rotation = maxRotation*Math.random();
+	    //that.y = maxVelocity*Math.random();
+	    that.rotation = 50*Math.random();
 	    
 	    if(Math.random() > 0.5){
 		that.x = that.x*(-1);
@@ -165,6 +167,50 @@ Assignment_4.engine = (function() {
 	
     };
 
+    //Game Object interface
+    function GameObject(){
+	var that = {
+	    position : Position(),
+	    hitBoxRadius : 0
+	    
+	};
+	
+	that.getPosition = function(){
+	    return that.position;
+	    
+	};
+	
+	that.setPosition = function(position){
+	    that.position = position;
+	};
+	
+	that.getHitBoxRadius = function(){
+	    return that.hitBoxRadius;
+	    
+	};
+	
+	that.detectCollision = function(gameObject){
+	    var result = false;
+	    var thisObjectPos = that.getPosition();
+	    var otherObjectPos = gameObject.getPosition();
+	    var distance = Math.sqrt(Math.pow(thisObjectPos.x - otherObjectPos.x, 2)+Math.pow(thisObjectPos.y - otherObjectPos.y, 2));
+	    var hitDistance = that.hitBoxRadius+gameObject.getHitBoxRadius();
+	    //console.log("distance from target: "+distance);
+	    //console.log("hit radius: "+hitDistance);
+	    if(distance <= hitDistance)
+	    {
+		result = true;
+		
+	    }
+	    
+	    return result;
+
+	};
+	
+	return that;
+	
+    };
+
     //particle object interface
     function Particle(){
 	//each particle is, in turn, a particle emitter, spawn as a stationary, immortal emitter		
@@ -188,7 +234,7 @@ Assignment_4.engine = (function() {
 	    
 	    for(i = 0; i < numberOfParticles; i++){
 		result.push(Particle());
-		result[i].base.position.randomVector(position, 50);
+		result[i].base.position.randomVector(position, 1);
 		result[i].base.position.randomAcceleration(0, 0);
 		result[i].immortal = false;
 		result[i].emitter = false;
@@ -243,7 +289,7 @@ Assignment_4.engine = (function() {
     //Smoke Particle object class
     function SmokeParticle(){
 	var that = {
-	    image : Assignment_3.images['images/smoke.png'],
+	    image : Assignment_4.images['media/smoke.png'],
 	    size : {
 		width : 83,
 		height : 75
@@ -355,7 +401,7 @@ Assignment_4.engine = (function() {
     function FireParticle(){
 	var that = {
 	    base : Particle(),
-	    image : Assignment_3.images['images/Fire.png'],
+	    image : Assignment_4.images['media/fire.png'],
 	    size : {
 		width : 256,
 		height : 256
@@ -464,4 +510,15 @@ Assignment_4.engine = (function() {
 	
     };
 
+    return {
+	Acceleration : Acceleration,
+	Vector : Vector,
+	Position : Position,
+	Particle : Particle,
+	SmokeParticle : SmokeParticle,
+	FireParticle : FireParticle
+
+    };
+
 }());
+
