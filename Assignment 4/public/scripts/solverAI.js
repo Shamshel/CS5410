@@ -61,6 +61,7 @@ Assignment_4.sovlerAI = (function() {
         that.solveHeightSmooth = function () {
             var i = 0,
                 j = 0,
+                blockF = false,
                 sumH = 0,
                 sumC = 0,
                 sumS = 0,
@@ -69,12 +70,16 @@ Assignment_4.sovlerAI = (function() {
             for(j = 0; j < 10; j++){
                 for(i = 0; i < 22; i++){
                     if(that.testGrid[i][j] != undefined){
-                        sumC++;
+                        blockF = true;
+                    }
+                    if (blockF === true) {
+                        sumC++
                     }
                 }
                 cols[j] = sumC;
                 sumH += sumC;
                 sumC = 0;
+                blockF = false;
             }
 
             //Find smoothness factor

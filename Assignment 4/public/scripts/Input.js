@@ -391,12 +391,12 @@ Assignment_4.input = (function() {
 	
 	//Set default controls
     var controls = {
-        prevKeyUp: KeyEvent.DOM_VK_UP,
-        prevKeyDown: KeyEvent.DOM_VK_DOWN,
-        prevKeyLeft: KeyEvent.DOM_VK_LEFT,
-        prevKeyRight: KeyEvent.DOM_VK_RIGHT,
-		prevKeyRotateRight: KeyEvent.DOM_VK_X,
-		prevKeyRotateLeft: KeyEvent.DOM_VK_Z,
+        prevKeyUp: KeyEvent.DOM_VK_W,
+        prevKeyDown: KeyEvent.DOM_VK_S,
+        prevKeyLeft: KeyEvent.DOM_VK_A,
+        prevKeyRight: KeyEvent.DOM_VK_D,
+		prevKeyRotateRight: KeyEvent.DOM_VK_E,
+		prevKeyRotateLeft: KeyEvent.DOM_VK_Q,
         newKeyUp: undefined,
         changeUp: false,
         newKeyDown: undefined,

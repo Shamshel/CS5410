@@ -128,7 +128,7 @@ Assignment_4.frame = (function() {
 	        context.font = '20px Arial';
 	        context.textAlign = 'center';
 	        context.fillStyle = 'black';
-	        context.fillText("Time", (that.x + (that.width / 2)), (that.y + (that.height / 10)));
+	        context.fillText("Level", (that.x + (that.width / 2)), (that.y + (that.height / 10)));
 	        context.fillText("Score", (that.x + (that.width / 2)), (that.y + (that.height / 2.5)));
 	        context.fillText("Lines", (that.x + (that.width / 2)), (that.y + (2 * (that.height / 2.5))) - (that.height / 10));
 
